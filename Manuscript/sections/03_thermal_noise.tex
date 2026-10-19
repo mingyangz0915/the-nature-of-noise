@@ -1,0 +1,165 @@
+\clearpage
+\section{Thermal noise: fluctuations and dissipation}
+\subsection{Thermal equilibrium and equipartition}
+Thermal equilibrium means that macroscopic averages no longer drift, not that microscopic charges stop moving. A voltage can have zero ensemble mean and nonzero mean square even after the circuit has fully settled. The equilibrium voltage distribution is determined by the stored energy and temperature.\footnote{Here $T$ is absolute temperature; observation duration is denoted $T_{\mathrm{obs}}$ when needed.}
+
+\paragraph{From stored energy to voltage probability.}
+A capacitor in thermal contact with its surroundings continually gains and loses small amounts of energy. At equilibrium, the statistical weight of a state with energy $U$ is proportional to
+\[
+e^{-U/(kT)}.
+\]
+This is the \emph{Boltzmann factor}. It compares the energy cost $U$ with the thermal energy scale $kT$, where $k=1.380649\times10^{-23}\,\mathrm{J/K}$ is Boltzmann's constant. We use this statistical-mechanical result without deriving it here.
+
+For an unbiased linear capacitor, $U_C=\tfrac12 Cv^2$. Substitution gives
+\[
+p(v)\propto e^{-Cv^2/(2kT)}.
+\]
+Compare this with the zero-mean Gaussian density,
+\[
+p(v)=\frac1{\sqrt{2\pi\sigma_v^2}}e^{-v^2/(2\sigma_v^2)}.
+\]
+Matching the Gaussian exponent gives
+\begin{equation}
+\boxed{\sigma_v^2=\E[v^2]=\frac{kT}{C},\qquad
+\E[U_C]=\frac12 C\E[v^2]=\frac12 kT.}
+\label{eq:ktc-equip}
+\end{equation}
+The quadratic energy gives a Gaussian voltage distribution: a larger $C$ makes a given fluctuation more costly, whereas higher temperature makes it more likely. Equation~\eqref{eq:ktc-equip} is an instance of classical \emph{equipartition}: each independent quadratic energy term has mean energy $kT/2$.
+
+A resistor permits charge and energy exchange. It controls the rate of relaxation, but not the final $kT/C$ variance. For a biased linear capacitor, $v$ denotes the fluctuation about its mean. These classical results assume effectively continuous charge; a Gaussian voltage distribution alone does not determine temporal correlation.
+
+\subsection{Johnson--Nyquist noise from equipartition}
+Connect a resistor $R$ to a capacitor $C$ at temperature $T$. Represent the resistor's noise by a series voltage $e_R$ with an unknown, constant one-sided PSD $S_0$. The voltage transfer function is
+\[
+H(f)=\frac1{1+j2\pi fRC},\qquad
+S_{v_C}^{(1)}(f)=S_0|H(f)|^2=\frac{S_0}{1+(2\pi fRC)^2}.
+\]
+\RCFigure
+
+In the ideal white-noise model, its equilibrium variance is
+\begin{align*}
+\E[v_C^2]
+&=\int_0^\infty S_0|H(f)|^2\dd f
+=\frac{S_0}{2\pi RC}\int_0^\infty\frac{\dd u}{1+u^2}\\
+&=\frac{S_0}{2\pi RC}\frac\pi2
+=\frac{S_0}{4RC},\qquad u=2\pi fRC.
+\end{align*}
+Equipartition requires this to equal $kT/C$. Therefore
+\[
+\frac{S_0}{4RC}=\frac{kT}{C}
+\quad\Longrightarrow\quad
+\boxed{S_0=4kTR.}
+\]
+Any other white-noise level would give the wrong equilibrium capacitor energy. This argument fixes the level \emph{assuming whiteness}; it does not prove that the noise is white or establish the general impedance formula. For a real resistor, the RC corner must lie well below the frequencies where its resistance or thermal-noise density changes appreciably. Extending the flat spectrum to infinity is then an approximation for evaluating the low-frequency result.
+
+The open-circuit density is therefore $4kTR$ V$^2$/Hz. In a flat band of width $B$,
+\begin{equation}
+v_{n,\rms}=\sqrt{\int_{\mathrm{band}}S_{v,\mathrm{oc}}^{(1)}(f)\,\dd f}
+=\sqrt{4kTRB}.\label{eq:resistor-rms}
+\end{equation}
+The equivalent parallel short-circuit current PSD is $S_{i,\mathrm{sc}}^{(1)}=4kT/R$ A$^2$/Hz. These are two descriptions of the same noisy resistor, not two independent sources to add simultaneously.
+
+The general fluctuation--dissipation relation extends this result. In the classical regime $hf\ll kT$, a passive linear impedance in equilibrium has one-sided open-circuit PSD
+\begin{equation}
+\boxed{S_{v,\mathrm{oc}}^{(1)}(f)=4kT\operatorname{Re}Z(f),\qquad f>0.}
+\label{eq:fdt}
+\end{equation}
+Here $h$ is Planck's constant. Only the dissipative part contributes. Its general derivation is beyond our scope; the RC argument establishes the resistor level under the stated white-noise approximation.
+
+\subsection{RC noise: correlation and settling}
+\label{sec:rc-chain}
+The RC calculation above fixes the total equilibrium variance. The circuit dynamics tell us how that variance is distributed in time and frequency. With $S_{e_R}^{(1)}=4kTR$, the capacitor spectrum is Lorentzian: its corner is $f_p=1/(2\pi RC)$, and its area is the $kT/C$ already calculated.
+
+\paragraph{Equilibrium correlation.}
+The circuit equation and impulse response are
+\[
+RC\frac{\dd v_C}{\dd t}+v_C=e_R(t),\qquad
+h(t)=\frac{e^{-t/(RC)}}{RC}\,u(t).
+\]
+Here $u(t)$ is the unit step. The two-sided driving PSD is $2kTR$, so $R_{e_R}(\tau)=2kTR\delta(\tau)$. In equilibrium, the filter acts on the entire past:
+\[
+v_C(t)=\int_0^\infty h(s)e_R(t-s)\dd s.
+\]
+Substitute this convolution at both times into the ensemble correlation:
+\begin{align*}
+R_{v_C}(\tau)
+&=\E[v_C(t)v_C(t+\tau)]\\
+&=\int_0^\infty\!\int_0^\infty h(s)h(r)
+\E[e_R(t-s)e_R(t+\tau-r)]\dd r\dd s\\
+&=2kTR\int_0^\infty\!\int_0^\infty h(s)h(r)
+\delta(\tau+s-r)\dd r\dd s.
+\end{align*}
+For $\tau\geq0$, the delta function selects $r=s+\tau\geq0$, giving
+\begin{align*}
+R_{v_C}(\tau)
+&=2kTR\int_0^\infty h(s)h(s+\tau)\dd s\\
+&=\frac{2kTR}{(RC)^2}e^{-\tau/(RC)}\frac{RC}{2}
+=\frac{kT}{C}e^{-\tau/(RC)}.
+\end{align*}
+Even symmetry gives
+\begin{equation}
+\boxed{R_{v_C}(\tau)=\frac{kT}{C}e^{-|\tau|/(RC)}.}
+\end{equation}
+Thus $RC$ is both the relaxation time and the correlation time. Increasing $R$ slows the fluctuations and narrows the spectrum without changing the equilibrium variance.
+
+If the drive is jointly Gaussian and the circuit is initialized in equilibrium, the output is a stationary Gaussian process. Its exponential covariance satisfies the mean- and correlation-ergodicity conditions in Sections~\ref{sec:mean-proof} and~\ref{sec:corr-ergodicity}. Whiteness alone does not establish Gaussianity; a raw periodogram still needs averaging to reduce its scatter (Section~\ref{sec:psd-measurement}).
+
+\paragraph{Settling and sampled noise.}
+If $v_C(0)=0$ in every outcome, the response instead begins at zero:
+\[
+v_C(t)=\int_0^t h(t-u)e_R(u)\dd u.
+\]
+Using the delta correlation of the drive gives
+\begin{align*}
+\Var[v_C(t)]
+&=2kTR\int_0^t h(t-u)^2\dd u\\
+&=\frac{2kTR}{(RC)^2}\int_0^t e^{-2(t-u)/(RC)}\dd u\\
+&=\boxed{\frac{kT}{C}\left(1-e^{-2t/(RC)}\right).}
+\end{align*}
+This transient is not stationary. The variance approaches $kT/C$ only after settling. If an ideal switch then isolates the capacitor, its sampled charge is retained; the capacitor does not generate a new independent noise sample at every instant. Leakage permits further relaxation.
+
+An ideal capacitor has no dissipative noise source of its own. Its equilibrium uncertainty comes from energy exchange with its surroundings. Taking $R\to\infty$ before allowing the circuit to settle isolates its initial charge; allowing equilibrium first and then disconnecting retains a random equilibrium sample. The order describes different experiments.
+
+\begin{example}[title={Changing resistance at fixed capacitance}]
+At $T=290\,\mathrm K$, $C=1\,\mathrm{pF}$, and $R=1\,\mathrm{k\Omega}$,
+\[
+\sqrt{4kTR}=4.00\,\mathrm{nV}/\sqrt{\mathrm{Hz}},\qquad
+f_p=159.2\,\mathrm{MHz},\qquad
+v_{C,\rms}=63.3\,\mu\mathrm V.
+\]
+Replacing $R$ by $10\,\mathrm{k\Omega}$ increases the resistor ASD by $\sqrt{10}$, reduces $f_p$ to $15.92\,\mathrm{MHz}$, and increases the settling time tenfold. The equilibrium RMS voltage remains $63.3\,\mu\mathrm V$: the higher source density is offset by the narrower bandwidth.
+\end{example}
+
+\subsection{Available noise power}
+Represent a resistor by an ideal noiseless resistor $R$ in series with its open-circuit noise voltage $v_n$. Attach an otherwise noiseless matched load $R_L=R$, as in Figure~\ref{fig:match}. The voltage divider gives $v_L=v_n/2$, so
+\begin{align}
+S_{v_L}^{(1)}&=\left|\frac{R}{R+R}\right|^2(4kTR)=kTR,\\
+P_{n,L}&=\frac{\E[v_L^2]}{R}
+=\frac{kTRB}{R}=\boxed{kTB}.\label{eq:ktb}
+\end{align}
+The divider ratio is squared because PSD tracks mean square. Thus $4kTR$ is an open-circuit voltage PSD, whereas $kT$ is the available power PSD delivered to a matched load. This calculation includes only source noise. Equal-temperature resistors also exchange noise in the reverse direction, so their net equilibrium heat flow is zero.
+\MatchedResistorFigure
+
+\Needspace{5\baselineskip}
+\begin{example}[title={Thermal noise density at 290 K}]
+At $T_0=290\,\mathrm K$, $kT_0=4.0039\times10^{-21}\,\mathrm{W/Hz}$. Decibel-milliwatts are defined by $P_{\mathrm{dBm}}=10\log_{10}(P/1\,\mathrm{mW})$, with $P$ in watts. In a $1\,\mathrm{Hz}$ band,
+\[
+10\log_{10}\!\left(\frac{kT_0(1\,\mathrm{Hz})}{1\,\mathrm{mW}}\right)
+=-173.98\,\mathrm{dBm}.
+\]
+Thus the conventional available noise-power density is $-173.98\,\mathrm{dBm/Hz}$. Increasing a flat integration band from $1\,\mathrm{MHz}$ to $10\,\mathrm{MHz}$ raises integrated power by $10$ dB and RMS voltage, at fixed resistance, by $\sqrt{10}$.
+\end{example}
+
+\subsection{Beyond the classical limit}
+A white spectrum cannot extend to arbitrarily high frequency. For one matched traveling-wave mode, the emitted thermal power density is
+\[
+S_{P,\mathrm{emit}}(f)=\frac{hf}{e^{hf/(kT)}-1},\qquad f>0.
+\]
+It approaches $kT$ when $hf\ll kT$ and rolls off when $f$ approaches $kT/h$ (about $6.04\,\mathrm{THz}$ at $290\,\mathrm K$). Substituting $x=hf/(kT)$ yields
+\[
+P_{\mathrm{emit}}=\frac{(kT)^2}{h}\int_0^\infty\frac{x}{e^x-1}\dd x
+=\frac{\pi^2(kT)^2}{6h}\simeq39.8\,\mathrm{nW}.
+\]
+The integral uses the standard identity $\int_0^\infty x/(e^x-1)\dd x=\pi^2/6$. One route is to expand $(e^x-1)^{-1}=\sum_{n\geq1}e^{-nx}$ and integrate term by term: $\int_0^\infty xe^{-nx}\dd x=1/n^2$, whose sum is $\pi^2/6$.
+
+This emitted power applies to a single matched traveling-wave mode. Equal-temperature terminations exchange equal powers. The symmetrized quantum noise spectrum includes a zero-point term and differs from emitted power; a detector's ordering convention must be specified before extending a classical formula into the quantum regime. Parasitic inductance, capacitance, frequency-dependent loss, and the measurement network also constrain real circuit bandwidth.

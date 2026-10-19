@@ -1,0 +1,316 @@
+\section{Noise sources and linear networks}
+\subsection{Shot noise, channel noise, and flicker noise}
+In addition to resistor thermal noise, electronic devices exhibit shot noise, channel thermal noise, and flicker noise. Their physical origins determine the appropriate stochastic models and spectra.
+
+\emph{Shot noise} comes from discrete charges crossing a barrier independently. Let $N$ be the number of crossings in a short interval $\Delta t$. In an ideal Poisson model, $\E[N]=\Var(N)=\lambda\Delta t$, where $\lambda$ is the average crossings per second. The transported charge is $Q=qN$ and the mean current is $I=q\lambda$. Therefore
+\[
+\Var(Q)=q^2\lambda\Delta t=qI\Delta t.
+\]
+The variance grows with observation time just as it would for a white current-noise process. More explicitly, a white two-sided current PSD $S_i^{(2)}$ gives charge variance $S_i^{(2)}\Delta t$ when current is integrated for $\Delta t$. The fluctuation charge is $Q_n=\int_0^{\Delta t}i_n(t)\dd t$ and ideal white-current correlation is $R_i(\tau)=S_i^{(2)}\delta(\tau)$, so
+\[
+\E[Q_n^2]=\int_0^{\Delta t}\!\int_0^{\Delta t}
+S_i^{(2)}\delta(t-u)\dd u\dd t=S_i^{(2)}\Delta t.
+\]
+This is a generalized-noise integral, not a finite-variance instantaneous white current.
+Comparing this with $qI\Delta t$ gives $S_i^{(2)}=qI$ and hence the one-sided PSD $S_i^{(1)}=2qI$ A$^2$/Hz. This is the \emph{full-shot-noise} limit: correlations between carriers, recombination, and device operating conditions can modify it. The counting model explains why the strength depends on the average current and elementary charge $q$.
+
+\emph{MOS channel thermal noise} is associated with dissipative carrier motion along a conducting channel. For an ideal long-channel MOSFET in strong inversion and saturation, a common low-frequency approximation is
+\begin{equation}
+S_{i_d}^{(1)}\simeq4kT\gamma g_{d0},\quad g_{d0}=g_m\ \text{in the ideal long-channel model},
+\qquad \gamma\simeq\frac23,\label{eq:mos}
+\end{equation}
+where $g_{d0}$ is the channel conductance evaluated at zero drain bias for the same gate overdrive, and $g_m=\partial I_D/\partial V_{GS}$ is the small-signal transconductance at the bias point. The coefficient $\gamma$ depends on the device model and operating regime; $2/3$ is not a universal measured constant. Short-channel designs require the process model.
+
+\emph{Flicker noise}, often described approximately by a spectrum proportional to $1/f^\alpha$ with $\alpha$ near one over a specified range, grows in importance at low frequency. Its magnitude depends on device physics, geometry, and bias, so a numerical prediction needs a device model. An ideal $1/f$ law cannot continue to $f=0$ while retaining finite integrated variance; the observation time or a physical low-frequency turnover matters.
+
+\begin{concept}[title={Source quantities and units}]
+$4kTR$ is an \emph{open-circuit voltage} PSD, while $2qI$ and $4kT\gamma g_{d0}$ are \emph{current} PSDs. They cannot be added until each has been carried to the same output variable. All three expressions above are one-sided and have a limited frequency and operating range.
+\end{concept}
+
+
+\subsection{Noise propagation in LTI networks}
+An LTI circuit weights and sums past input values:
+\[
+Y(t)=\int_{\mathbb R}h(u)X(t-u)\dd u,\qquad
+H(f)=\int_{\mathbb R}h(u)e^{-j2\pi fu}\dd u.
+\]
+Assume real $h$, a real zero-mean WSS input with finite variance and integrable autocorrelation, and $\int|h(u)|\dd u<\infty$. Substituting the convolution at both times gives
+\begin{align*}
+R_Y(\tau)&=\E[Y(t+\tau)Y(t)]\\
+&=\iint h(u)h(v)\E[X(t+\tau-u)X(t-v)]\dd u\dd v\\
+&=\iint h(u)h(v)R_X(\tau-u+v)\dd u\dd v.
+\end{align*}
+Finite input variance and the stated integrability conditions justify exchanging these averages and integrals. To Fourier-transform the last expression, set $w=\tau-u+v$, so $\tau=w+u-v$. The exponential splits into one factor for each variable:
+\begin{align*}
+S_Y^{(2)}(f)
+&=\left[\int h(u)e^{-j2\pi fu}\dd u\right]
+\left[\int h(v)e^{j2\pi fv}\dd v\right]S_X^{(2)}(f)\\
+&=H(f)H(-f)S_X^{(2)}(f)=|H(f)|^2S_X^{(2)}(f).
+\end{align*}
+The last equality uses $H(-f)=H(f)^*$ for real $h$. Two input samples enter the correlation, producing two transfer factors. Folding the real spectrum gives the one-sided results
+\begin{align}
+\boxed{S_Y^{(1)}(f)=|H(f)|^2S_X^{(1)}(f),\quad f>0,}\label{eq:lti}\\
+\boxed{\sigma_Y^2=\int_0^\infty|H(f)|^2S_X^{(1)}(f)\dd f.}\label{eq:outvariance}
+\end{align}
+Ideal white input is a generalized process rather than a finite-variance waveform. The same filtering rule applies in that sense; its output has finite variance when the weighted PSD is integrable. For a flat input, this requires $\int|h(t)|^2\dd t<\infty$.
+
+\subsection{Correlated noise sources}
+For two zero-mean voltage contributions, expanding the square gives
+\[
+\Var(X_1+X_2)=\Var(X_1)+\Var(X_2)+2\Cov(X_1,X_2).
+\]
+Positive covariance reinforces the sum; negative covariance reduces it. For different circuit paths, the relative phase also matters, so we need a cross spectrum.
+
+Assume $X_1,X_2$ are jointly WSS with integrable correlations. Define
+\[
+R_{12}(\tau)=\E[X_1(t+\tau)X_2(t)],\qquad
+S_{12}(f)=\lim_{T\to\infty}\frac1T\E[X_{1,T}(f)X_{2,T}(f)^*].
+\]
+Both transforms use the same experimental outcome. Unlike a magnitude square, their product retains relative phase and can be complex. Expanding the transforms as in Wiener--Khinchin gives
+\[
+\frac1T\E[X_{1,T}X_{2,T}^*]
+=\int_{-T}^T\left(1-\frac{|\tau|}{T}\right)R_{12}(\tau)e^{-j2\pi f\tau}\dd\tau.
+\]
+Taking the limit yields $S_{12}=\int R_{12}(\tau)e^{-j2\pi f\tau}\dd\tau$. Reversing the two real signals reverses the lag, so $S_{21}=S_{12}^*$.
+
+Now let $Y_i=h_i*X_i$ and $Y=Y_1+Y_2$. Expanding $\E[Y(t+\tau)Y(t)]$ produces two auto-correlations and two cross correlations. The first cross correlation is
+\[
+R_{Y_1Y_2}(\tau)=\iint h_1(u)h_2(v)R_{12}(\tau-u+v)\dd u\dd v.
+\]
+With real, absolutely integrable $h_1,h_2$, the same substitution $w=\tau-u+v$ gives
+\[
+S_{Y_1Y_2}=H_1H_2^*S_{12},\qquad S_{Y_2Y_1}=(H_1H_2^*S_{12})^*.
+\]
+A complex number plus its conjugate equals twice its real part. Adding all four contributions therefore gives
+\begin{equation}
+\boxed{S_Y=|H_1|^2S_{11}+|H_2|^2S_{22}
++2\operatorname{Re}\{H_1H_2^*S_{12}\}.}
+\label{eq:cross}
+\end{equation}
+The cross term includes both source correlation and the phase difference between circuit paths. Setting $H_1=H_2=1$ recovers direct addition. Zero covariance at lag zero is insufficient to discard this term: the sources must be uncorrelated at all lags, so that $S_{12}=0$. These equations use two-sided spectra; doubling every positive-frequency entry gives the one-sided form.
+
+The finite-record PSD definition gives the same result, but a windowed convolution is not exactly the convolution of windowed signals. Appendix~\ref{app:window-filter} proves that the boundary error vanishes in the normalized mean square.
+
+\subsection{Input-referred voltage and current noise}
+Referring noise to the input removes the signal gain, allowing comparison under specified source and load conditions.
+\label{sec:input-referred}
+
+Input-referred noise reproduces the output noise through the signal transfer function. For specified source and load terminations, let $u_s$ and $y_s$ be the input and output signal variables. The noiseless signal transfer is $H_s=y_s/u_s$. A fictitious input noise $u_n$ passed through that transfer reproduces the actual output noise PSD $S_{y_n}$ when
+\[
+|H_s(f)|^2S_{u_n}(f)=S_{y_n}(f).
+\]
+Thus, wherever $H_s\neq0$,
+\begin{equation}
+\boxed{S_{u,\mathrm{eq}}(f)=\frac{S_{y_n}(f)}{|H_s(f)|^2}.}
+\end{equation}
+For voltage excitation, $u_s=v_s$ and $S_{u,\mathrm{eq}}$ has units V$^2$/Hz; for current excitation, $u_s=i_s$ and its units are A$^2$/Hz. If the output is a voltage, the corresponding signal transfers have units V/V and V/A respectively. These are distinct reference choices.
+\InputReferralFigure
+
+For example, an output voltage ASD $10$ nV/$\sqrt{\mathrm{Hz}}$ and voltage gain magnitude $5$ imply input-referred voltage ASD $2$ nV/$\sqrt{\mathrm{Hz}}$. A transimpedance magnitude $1$ k$\Omega$ instead gives $10$ pA/$\sqrt{\mathrm{Hz}}$ for a current reference. In both cases the squared transfer restores the same output density. This single-source equivalence applies to the specified drive; changing source impedance generally changes how internal noise reaches the output. The two-port model in Section~\ref{sec:twoport} uses both a series voltage and shunt current, including their cross spectrum, to retain that dependence.
+
+Input-referred spectral density and integrated output variance are distinct quantities. In general,
+\[
+\int\frac{S_{y_n}(f)}{|H_s(f)|^2}\dd f
+\neq\frac{\int S_{y_n}(f)\dd f}{|H_s(0)|^2}.
+\]
+The latter is an integrated output variance divided by DC gain squared; the former first refers each frequency to its own input. The integration band must be specified, especially near signal-transfer zeros.
+
+\subsection{Equivalent noise bandwidth}
+\label{sec:shaping}
+Suppose the input has a one-sided white PSD $S_0$ over the frequencies that significantly pass through a low-pass circuit. Factoring out the DC magnitude $|H(0)|^2$ defines the equivalent noise bandwidth (ENBW):
+\begin{equation}
+B_{\enbw}=\int_0^\infty\frac{|H(f)|^2}{|H(0)|^2}\,\dd f,
+\qquad \sigma_Y^2=S_0|H(0)|^2B_{\enbw}.\label{eq:enbw}
+\end{equation}
+ENBW is an \emph{area}, expressed as the width of a rectangle whose height is the low-frequency output PSD. It is not necessarily the $3$-dB frequency. The definition assumes the source density is approximately flat over the weighted band; colored noise instead requires Eq.~\eqref{eq:outvariance} directly.
+
+For a single real pole,
+\[
+H(f)=\frac{H_0}{1+jf/f_p},\qquad
+\frac{S_Y(f)}{S_0|H_0|^2}=\frac{1}{1+(f/f_p)^2}.
+\]
+At $f=f_p$, the squared gain is one half its DC value, so $f_p=f_{3\,\mathrm{dB}}$. With $u=f/f_p$ and $\int_0^\infty(1+u^2)^{-1}\dd u=\pi/2$,
+\begin{equation}
+\boxed{B_{\enbw}=f_p\int_0^\infty\frac{\dd u}{1+u^2}
+=\frac{\pi}{2}f_p.}\label{eq:enbw-onepole}
+\end{equation}
+Figure~\ref{fig:enbw} compares the true spectrum with its equal-area rectangle. A smaller pole frequency narrows the spectral area and lowers output variance for a \emph{fixed} source density $S_0$.
+\NoiseBandwidthFigure
+
+\Needspace{5\baselineskip}
+\begin{example}[title={Equivalent noise bandwidth of an RC circuit}]
+For the RC circuit of Chapter~3, $S_0=4kTR$, $H(0)=1$, and $f_p=1/(2\pi RC)$. Thus
+\[
+\E[v_C^2]=4kTR\left(\frac\pi2\frac1{2\pi RC}\right)=\frac{kT}{C}.
+\]
+ENBW reproduces equipartition. Changing $R$ changes both source density and bandwidth, so their product stays fixed.
+\end{example}
+
+\subsection{Noise bandwidth for multiple poles and zeros}
+A corner frequency specifies one point on a response, whereas noise variance depends on its entire area. A second pole adds high-frequency attenuation; a zero can undo some of it. Figure~\ref{fig:multipole} compares these effects using the \emph{same} white source density $S_0$ and DC gain $H_0=1$.
+\MultiPoleFigure
+
+With two distinct positive pole frequencies $f_{p1},f_{p2}$ and no zero, the normalized squared response is $[1+(f/f_{p1})^2]^{-1}[1+(f/f_{p2})^2]^{-1}$. Its integrated area is
+\begin{equation}
+\boxed{B_{\enbw,2p}=\frac{\pi}{2}\frac{f_{p1}f_{p2}}{f_{p1}+f_{p2}}.}\label{eq:two-pole}
+\end{equation}
+The fraction $f_{p1}f_{p2}/(f_{p1}+f_{p2})$ is the parallel combination of the two pole frequencies. If $f_{p2}\gg f_{p1}$, the second pole lies well beyond the dominant noise band and the answer approaches $\pi f_{p1}/2$.
+
+Partial fractions express the integral as a combination of two one-pole areas. Set $p_1=f_{p1}$ and $p_2=f_{p2}$. The normalized response equals
+\[
+\frac{1}{[1+(f/p_1)^2][1+(f/p_2)^2]}
+=\frac{p_2^2}{p_2^2-p_1^2}\frac{1}{1+(f/p_1)^2}
+-\frac{p_1^2}{p_2^2-p_1^2}\frac{1}{1+(f/p_2)^2}.
+\]
+Integrating each term gives $(\pi/2)[p_1p_2^2-p_2p_1^2]/(p_2^2-p_1^2)$, which simplifies to Eq.~\eqref{eq:two-pole}. 
+
+Now include a real zero at $f_z>0$ in the transfer function numerator. Its squared magnitude contributes $1+(f/f_z)^2$, giving
+\begin{equation}
+\boxed{B_{\enbw,2p1z}=\frac{\pi}{2}
+\frac{f_{p1}f_{p2}}{f_{p1}+f_{p2}}
+\left(1+\frac{f_{p1}f_{p2}}{f_z^2}\right).}\label{eq:two-pole-zero}
+\end{equation}
+To derive the extra area, retain $p_1=f_{p1}$, $p_2=f_{p2}$. The integrand is the no-zero response plus $f^2/f_z^2$ times that response. The second required integral follows from
+\[
+\frac{f^2}{[1+(f/p_1)^2][1+(f/p_2)^2]}
+=\frac{p_1^2p_2^2}{p_2^2-p_1^2}
+\left[\frac1{f^2+p_1^2}-\frac1{f^2+p_2^2}\right].
+\]
+Using $\int_0^\infty\dd f/(f^2+p^2)=\pi/(2p)$,
+\[
+\int_0^\infty\frac{f^2\dd f}{[1+(f/p_1)^2][1+(f/p_2)^2]}
+=\frac{\pi p_1^2p_2^2}{2(p_2^2-p_1^2)}\left(\frac1{p_1}-\frac1{p_2}\right)
+=\frac{\pi p_1^2p_2^2}{2(p_1+p_2)}.
+\]
+Add this divided by $f_z^2$ to Eq.~\eqref{eq:two-pole} to obtain Eq.~\eqref{eq:two-pole-zero}.
+The zero increases area relative to the two-pole response, even though the DC gain is the same. Sending $f_z\to\infty$ removes its effect and recovers Eq.~\eqref{eq:two-pole}. These formulas give output \emph{variance} $S_0|H_0|^2B_{\enbw}$ for a voltage or current PSD; they give power only if $S_0$ is a power PSD or if the output mean square is converted through an appropriate load.
+
+For the frequencies in Figure~\ref{fig:multipole}, choose $f_{p1}=1\,\mathrm{MHz}$, $f_{p2}=4\,\mathrm{MHz}$, and $f_z=2\,\mathrm{MHz}$. The one-pole ENBW is $1.571\,\mathrm{MHz}$; adding the second pole changes it to $1.257\,\mathrm{MHz}$; including the zero changes it to $2.513\,\mathrm{MHz}$. Multiplying each bandwidth by the same $S_0|H_0|^2$ gives the corresponding output mean square. 
+
+The same partial-fraction method extends to multiple poles and zeros. For a transfer function with $n$ distinct real pole frequencies and $n-1$ real zero frequencies,
+\[
+H(f)=H_0\frac{\prod_{i=1}^{n-1}(1+jf/f_{zi})}
+                 {\prod_{i=1}^{n}(1+jf/f_{pi})},
+\quad f_{pi},f_{zi}>0,
+\]
+the normalized squared magnitude is a rational function of $f^2$. It can be decomposed as
+\begin{equation}
+\frac{|H(f)|^2}{|H_0|^2}
+=\frac{\prod_{i=1}^{n-1}[1+(f/f_{zi})^2]}
+       {\prod_{i=1}^{n}[1+(f/f_{pi})^2]}
+=\sum_{k=1}^{n}\frac{A_k}{1+(f/f_{pk})^2},\label{eq:partial}
+\end{equation}
+To find $A_k$, set $x=f^2$ in Eq.~\eqref{eq:partial} and multiply by the full denominator. This removes the fractions and gives the polynomial identity
+\[
+\prod_{i=1}^{n-1}(1+x/f_{zi}^2)
+=\sum_{j=1}^{n}A_j\prod_{\substack{i=1\\i\ne j}}^{n}(1+x/f_{pi}^2).
+\]
+Set $x=-f_{pk}^2$. Every term on the right except $j=k$ contains the zero factor $1+x/f_{pk}^2$. The remaining product therefore determines $A_k$: divide the left-hand side by $\prod_{i\ne k}(1-f_{pk}^2/f_{pi}^2)$ to obtain
+
+\begin{equation}
+A_k=\frac{\prod_{i=1}^{n-1}[1-(f_{pk}/f_{zi})^2]}
+           {\prod_{\substack{i=1\\i\ne k}}^{n}[1-(f_{pk}/f_{pi})^2]}.
+\label{eq:residue}
+\end{equation}
+The negative $x$ is used only to evaluate the polynomial identity, not as a physical value of $f^2$.
+
+Integrate the finite sum term by term. The substitution $u=f/f_{pk}$ makes each term a one-pole area:
+\[
+\int_0^\infty\frac{\dd f}{1+(f/f_{pk})^2}
+=f_{pk}\int_0^\infty\frac{\dd u}{1+u^2}=\frac\pi2 f_{pk}.
+\]
+Hence
+
+\begin{equation}
+\boxed{B_{\enbw}=\frac{\pi}{2}\sum_{k=1}^{n}A_k f_{pk}.}\label{eq:general-enbw}
+\end{equation}
+Some $A_k$ can be negative even though the \emph{sum} in Eq.~\eqref{eq:partial} is nonnegative; partial-fraction terms are algebraic pieces, not separate noise sources. The formula assumes distinct poles, a stable response, and a white source over the relevant band. Repeated poles require a limiting calculation or a different partial-fraction form. If there are too many zeros relative to poles, the ideal white-noise integral to infinity may diverge; a physical bandwidth limit must then be included.
+
+\Needspace{5\baselineskip}
+\subsection{Diode shot noise and incremental resistance}
+\paragraph{Two carrier streams.}
+For an ideal diffusion diode,
+\[
+I_D=I_S(e^{V_D/V_T}-1)=I_+-I_-,\qquad
+I_+=I_Se^{V_D/V_T},\quad I_-=I_S,\quad V_T=\frac{kT}{q}.
+\]
+The two streams represent carriers crossing in opposite directions. In the ideal model their crossing events are independent Poisson processes. Their mean currents subtract, but their noise variances add: reversing the sign of one random current does not change its variance. The one-sided shot-noise PSD is therefore
+\begin{equation}
+\boxed{S_{i_D}^{(1)}=2qI_++2qI_-=2qI_S(e^{V_D/V_T}+1).}
+\end{equation}
+At zero bias, $I_+=I_-=I_S$: zero net current does not mean that carriers stop crossing. The resulting PSD is $4qI_S$. Under strong forward bias, $I_+\gg I_-$ and $S_{i_D}^{(1)}\simeq2qI_D$.
+
+\paragraph{Incremental resistance and equilibrium noise.}
+The diode's incremental conductance describes its response to a small voltage perturbation:
+\[
+g_d=\frac{\partial I_D}{\partial V_D}
+=\frac{I_+}{V_T},\qquad r_d=\frac1{g_d}.
+\]
+At equilibrium ($V_D=0$),
+\[
+4kTg_d=4kT\frac{I_S}{V_T}=4qI_S=S_{i_D}^{(1)}.
+\]
+The small-signal resistor symbol does not create an additional noise mechanism. It represents a real dissipative response of the junction: a small sinusoidal voltage delivers average power $g_d v_{\mathrm{ac},\rms}^2$. At equilibrium, the fluctuation--dissipation relation links that response to the same random carrier crossings counted above. Thus $4kT/r_d$ and the two-stream shot-noise result describe the \emph{same} junction fluctuations; they must not be added.
+
+A mathematical equivalent resistance is not automatically a thermal-noise source. Its physical origin and operating state matter. In particular, the biased diode is not in thermal equilibrium. At strong forward bias,
+\[
+S_{i_D}^{(1)}\simeq2qI_D,\qquad 4kTg_d\simeq4qI_D.
+\]
+Blindly assigning equilibrium resistor noise to $r_d$ would therefore give the wrong answer. Physical contact and bulk series resistances have their own thermal noise, separate from the junction shot noise. Recombination and trapping can introduce additional mechanisms beyond the ideal diffusion-diode model.
+
+\subsection{Physical origins of MOSFET noise}
+\label{sec:rf-device}
+A MOSFET contains a conducting channel, an insulated gate, defects, and resistive contacts and interconnects. These produce different fluctuations and couple them to different terminals. All PSDs in this section are one-sided.
+
+\paragraph{Channel thermal noise.}
+Random carrier motion and scattering in the inversion channel produce local current fluctuations. The terminal drain noise is the combined effect of these distributed fluctuations, weighted by the channel charge and potential profile. For the conventional long-channel model in strong-inversion saturation,
+\begin{equation}
+S_{i_d}=4kT\gamma g_{d0},\qquad \gamma=\frac23.
+\end{equation}
+Here $g_{d0}$ is the channel conductance at zero drain bias with the same gate overdrive; it is not the small saturation-region output conductance $g_{ds}$. In the ideal long-channel model $g_{d0}=g_m$, giving the familiar $4kT\gamma g_m$. The factor $\gamma$ accounts for the nonuniform biased channel. Neither $g_m$ nor $g_{ds}$ should be treated as an independent passive resistor with its own $4kTg$ source. Short-channel transport and high-field effects require a more complete model.
+
+\paragraph{Induced gate noise.}
+Channel fluctuations also change the channel potential and charge. Capacitive coupling through the gate oxide then changes the gate charge, producing a displacement current $i_g=\dd q_g/\dd t$. No carrier needs to cross the oxide: this mechanism exists even with zero DC gate leakage. Differentiation contributes a factor $j\omega$, so a nearly white channel fluctuation produces a gate-current PSD proportional to $\omega^2$.
+
+In a quasi-static long-channel RF model,
+\begin{align}
+g_g&=\frac{\omega^2C_{gs}^2}{5g_{d0}},\qquad
+S_{i_g}=4kT\delta g_g,\qquad \delta=\frac43,\quad \omega=2\pi f,\\
+S_{i_g i_d}&=c\sqrt{S_{i_g}S_{i_d}},\qquad |c|\leq1.
+\end{align}
+Gate and drain noise are partly correlated because they arise from the same distributed channel fluctuations. They are not identical copies: the two terminals weight those fluctuations differently. The coefficient $c$ carries their relative phase and is approximately imaginary in the ideal model. Its sign depends on current directions and cross-spectrum orientation.
+
+An $\omega^2$ current spectrum does not imply an $\omega^2$ equivalent voltage spectrum. With the intrinsic input impedance
+\[
+Z_g=\frac1{g_g+j\omega C_{gs}},\qquad
+S_{v_g}=|Z_g|^2S_{i_g},
+\]
+the limit $g_g\ll\omega C_{gs}$ gives
+\[
+r_g\equiv\operatorname{Re}Z_g\simeq\frac{g_g}{\omega^2C_{gs}^2}
+=\frac1{5g_{d0}},\qquad
+S_{v_g}\simeq\frac{S_{i_g}}{\omega^2C_{gs}^2}=4kT\delta r_g.
+\]
+This $r_g$ represents channel charging loss, not the physical gate electrode. Replacing it by a passive resistor with noise $4kTr_g$ would lose both the factor $\delta$ and the correlation with drain noise.
+
+\paragraph{Flicker noise and traps.}
+Defects near the oxide--semiconductor interface can capture and release carriers. Their changing charge perturbs the inversion charge and threshold voltage, and can also change carrier mobility through scattering. The resulting drain-current fluctuation is slow compared with ordinary channel thermal noise. A dominant individual trap can produce random-telegraph switching with a Lorentzian spectrum; many traps with a broad range of time constants can produce an approximately $1/f$ spectrum.
+
+A common gate-referred approximation over a finite frequency band is
+\[
+S_{v_g,1/f}\simeq\frac{K_A}{WLf},\qquad
+S_{i_d,1/f}\simeq g_m^2S_{v_g,1/f}.
+\]
+The equivalent gate voltage represents a fluctuating channel-control voltage; it does not imply that the gate electrode itself generates this noise. $K_A$ has units V$^2\cdot$m$^2$ when $W,L$ are in metres, and depends on process and bias. Larger area usually reduces the average density in this model, but small devices may be dominated by individual traps. Mixers and oscillators can translate these low-frequency fluctuations to frequencies near a carrier.
+
+\paragraph{Physical resistances.}
+The gate electrode, source and drain access regions, contacts, and substrate have real dissipative resistance. Their thermal noise is additional to the intrinsic channel mechanisms. Physical gate resistance $R_g$ contributes series voltage PSD $4kTR_g$; it is distinct from the intrinsic $r_g$ above. Source and drain resistance noise reaches the output through the corresponding terminal transfer functions. Substrate resistance produces body-voltage noise, which modulates drain current through $g_{mb}$; a simple unfiltered approximation is
+\[
+S_{i_d,\mathrm{sub}}\simeq g_{mb}^2\,4kTR_{\mathrm{sub}}.
+\]
+A distributed substrate RC network shapes this spectrum. Multiple gate fingers and contacts can reduce gate resistance, with accompanying changes in parasitic capacitance.
+
+\paragraph{Leakage and junction shot noise.}
+If electrons tunnel through the gate dielectric, the discrete crossing events produce gate-current shot noise, distinct from the displacement-current mechanism above. Independent one-way tunneling gives $S_{i_g,\mathrm{shot}}\simeq2q|I_G|$. Source/body and drain/body junction leakage can likewise contribute shot noise. Their importance depends on bias, temperature, and the device structure.
+
+The long-channel coefficients and quasi-static formulas explain the mechanisms; quantitative RF design requires the process noise model, including its terminal correlations and frequency limits.

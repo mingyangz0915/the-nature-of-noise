@@ -1,0 +1,386 @@
+
+\section{Probability and random processes}
+\subsection{Random variables, processes, and realizations}
+For a sinusoid $x(t)=A\cos(2\pi f_0t+\phi)$, fixing $A$, $f_0$, and $\phi$ determines the voltage at every time. Repeating a thermal-noise measurement under unchanged macroscopic conditions gives a different trace each time. We therefore describe a family of possible waveforms together with their probabilities, rather than one predetermined waveform.
+
+\paragraph{Outcomes, events, and probability.}
+An \emph{outcome} $s$ is one complete possible result of the experiment. In a noise model, it specifies enough information to determine an entire voltage record, not just the voltage at one time. The \emph{sample space} $\Omega$ is the set of all possible outcomes.
+
+An \emph{event} $A$ is a collection of outcomes to which the model assigns a probability $P(A)$. For example, ``the voltage at $t_0$ is positive'' selects every outcome whose record meets that condition. Formally, events are measurable subsets of $\Omega$; not every subset must be an event in a general model. In a finite model, we can take every subset as an event. The probability of the whole sample space is one, and probabilities of disjoint events add. Appendix~\ref{app:probability} states the general framework.
+
+\paragraph{Random variables and random processes.}
+A real \emph{random variable} is a function $Z:\Omega\to\mathbb R$: it assigns a number $Z(s)$ to each outcome. Its value becomes definite once the outcome is fixed. Its probabilities come from the outcomes, rather than from a separate assignment:
+\[
+P\{Z\leq z\}=P\bigl(\{s\in\Omega:Z(s)\leq z\}\bigr).
+\]
+The function must be measurable, meaning that each such set is an event. An outcome and the numerical value of a random variable are different objects; several outcomes can give the same value.
+
+A real \emph{random process} is a family of random variables indexed by time, defined on the same probability space. We write
+\begin{equation}
+X(t,s),\qquad t\in\mathbb R,\quad s\in\Omega.
+\label{eq:process}
+\end{equation}
+Its two arguments keep separate the time of observation and the outcome being observed:
+\begin{itemize}
+\item Fixing $s=s_i$ gives a \emph{realization} $x_i(t)=X(t,s_i)$: one waveform as time varies.
+\item Fixing $t=t_0$ gives the random variable $X(t_0,\cdot)$: one voltage value for each possible outcome. Its probability distribution compares records at that same time.
+\end{itemize}
+The \emph{ensemble} is the family of possible realizations with the probability weighting inherited from the model. It is not a finite collection of measured traces; repeated experiments sample this ensemble. Different outcomes may produce the same realization.
+
+\RealizationFigure
+
+For example, let two independent fair coin tosses set voltages at $t_0$ and $t_1$: heads means $+1$ mV and tails means $-1$ mV. The complete outcomes are
+\[
+\Omega=\{HH,HT,TH,TT\},\qquad P(\{s\})=1/4.
+\]
+The event $A=\{s:X(t_0,s)>0\}=\{HH,HT\}$ contains two outcomes, so $P(A)=1/4+1/4=1/2$.
+\begin{center}
+\begin{tabular}{cccc}\toprule
+Outcome $s$ & $P(\{s\})$ & $X(t_0,s)$ & $X(t_1,s)$\\\midrule
+$HH$ & $1/4$ & $+1$ & $+1$\\
+$HT$ & $1/4$ & $+1$ & $-1$\\
+$TH$ & $1/4$ & $-1$ & $+1$\\
+$TT$ & $1/4$ & $-1$ & $-1$\\\bottomrule
+\end{tabular}\par\vspace{2mm}
+{\small Voltages are in millivolts. A column fixes time; a row fixes an outcome.}
+\end{center}
+A column fixes time and lists the random variable's values across outcomes. A row fixes an outcome and gives two samples from its realization. Throughout the text, $\E$ denotes an average over outcomes, weighted by their probabilities.
+
+\subsection{Ensemble mean, variance, and root-mean-square value}
+An expectation is a probability-weighted average. If a random variable $Z$ takes values $z_i$ with probabilities $p_i$, then
+\[
+\E[Z]=\sum_i p_i z_i.
+\]
+If its values have a probability density $p_Z(z)$, the sum becomes
+\[
+\E[Z]=\int_{-\infty}^{\infty}z\,p_Z(z)\dd z.
+\]
+A density is probability per unit value: $p_Z(z)\dd z$ is the probability of a value in a small interval near $z$. Neither expression averages along time.
+
+At each fixed time $t$, the process has a voltage distribution. Its ensemble mean is
+\begin{equation}
+\boxed{\mu_X(t)=\E[X(t)]=\int_{-\infty}^{\infty}x\,p_X(x;t)\dd x,}
+\end{equation}
+when a density exists; a discrete distribution uses the weighted sum instead. The semicolon in $p_X(x;t)$ emphasizes that $x$ is the integration variable and $t$ is held fixed.
+The ensemble variance and RMS are
+\begin{align}
+\sigma_X^2(t)&=\E[(X(t)-\mu_X(t))^2],\\
+X_{\rms}(t)&=\sqrt{\E[X(t)^2]}.
+\end{align}
+At fixed $t$, $\mu_X(t)$ is a number, so it can be taken outside the expectation. Expanding the square and using $\E[X(t)]=\mu_X(t)$ gives
+\begin{align}
+\sigma_X^2(t)&=\E[X(t)^2]-2\mu_X(t)\E[X(t)]+\mu_X(t)^2\notag\\
+&=\E[X(t)^2]-\mu_X(t)^2.
+\label{eq:variance}
+\end{align}
+
+The RMS includes the mean; standard deviation measures fluctuations about it. Neither is a time average by definition. In the coin example, at either fixed time $\E[X(t)]=0$ but $\E[X(t)^2]=(1\,\mathrm{mV})^2$. For a voltage across a resistor, the ensemble-average power is $\E[X(t)^2]/R>0$ despite the zero mean. Whether a measured time-average power equals this number is a separate question.
+
+\begin{insight}[title={A Gaussian model describes the voltage distribution}]
+A Gaussian random variable has the bell-shaped density
+\[
+p_X(x)=\frac{1}{\sqrt{2\pi}\sigma}
+\exp\!\left[-\frac{(x-\mu)^2}{2\sigma^2}\right].
+\]
+Its mean $\mu$ locates the center and its standard deviation $\sigma$ sets the width. A histogram of repeated fixed-time measurements estimates this distribution. A histogram formed along one trace estimates it only under suitable averaging conditions.
+
+A \emph{jointly Gaussian process} has Gaussian joint distributions for every finite collection of samples. This is stronger than requiring a Gaussian histogram at each time: it also specifies how samples depend on one another. Its mean and covariance determine all those joint distributions.
+\end{insight}
+
+\subsection{Temporal dependence and correlation}
+\label{sec:temporal-dependence}
+Consider samples $X_n(s)=X(nT_s,s)$ at sample interval $T_s$. At every fixed $n$, the following processes have probabilities $1/2$ for $+1$ and $-1$ V:
+\begin{enumerate}
+\item Persistent: select one fair random sign $A$ and set $X_n=A$ for all $n$.
+\item Independent: select a fresh fair sign at each $n$.
+\item Alternating: select one fair sign $A$ and set $X_n=(-1)^nA$.
+\end{enumerate}
+All three have ensemble mean zero and variance $1\,\mathrm{V}^2$ at every time. Now \emph{operate across two times within each realization}:
+\[
+Y_n(s)=\frac{X_n(s)+X_{n-1}(s)}{2}.
+\]
+This finite temporal filter is not an ensemble average. After filtering each waveform, we compute the ensemble output variance by fixing $n$ and averaging $Y_n(s)^2$ across outcomes:
+\begin{align*}
+\E[Y_n^2]
+&=\frac14\E[(X_n+X_{n-1})^2]\\
+&=\frac14\{\E[X_n^2]+\E[X_{n-1}^2]+2\E[X_nX_{n-1}]\}.
+\end{align*}
+For the persistent process $X_nX_{n-1}=A^2=1$; for independent signs its expectation factors as $\E[X_n]\E[X_{n-1}]=0$; for alternating signs $X_nX_{n-1}=-A^2=-1$. Since $\E[Y_n]=0$, the respective variances are $1$, $1/2$, and $0\,\mathrm{V}^2$. A fixed-time histogram cannot supply this cross-time information.
+\MarginalFigure
+
+The cross term distinguishes the three processes: adjacent fluctuations reinforce, cancel on average, or cancel exactly. The same product average applies to two voltages $U,V$ at different circuit nodes. Each pair must come from the same experimental outcome; pairing unrelated experiments would discard the dependence of interest.
+
+\paragraph{Removing the mean: covariance.}
+The sign examples have zero mean, so their voltages are already deviations about the mean. A practical voltage may also contain a DC bias. The product $\E[UV]$ then includes both the bias and the relation between the fluctuations. For example, let
+\[
+U=V_0+u,\qquad V=V_0+v,
+\]
+where $u$ and $v$ are independent zero-mean fluctuations. Expanding before taking the expectation gives
+\[
+\E[UV]=V_0^2+V_0\E[u]+V_0\E[v]+\E[uv]=V_0^2.
+\]
+The product average is positive even though the fluctuations are independent. To isolate the fluctuations, subtract the mean of each voltage before multiplying.
+
+Define $\mu_U=\E[U]$, $\mu_V=\E[V]$, and the centered variables $U_c=U-\mu_U$, $V_c=V-\mu_V$. Their product average is the \emph{covariance}:
+\begin{align}
+\Cov(U,V)&=\E[U_cV_c]
+=\E[(U-\mu_U)(V-\mu_V)]\\
+&=\E[UV]-\mu_U\mu_V.
+\end{align}
+Covariance is the two-variable counterpart of variance: $\Cov(U,U)=\Var(U)$. Positive covariance means that deviations with the same sign dominate the product average; negative covariance means that deviations with opposite signs dominate. Neither statement requires every observed pair to have the corresponding signs.
+
+For the sign examples, the adjacent-sample covariances are $+1$, $0$, and $-1\,\mathrm{V}^2$. For general means, center the two inputs first. Expanding $\E[(U_c+V_c)^2]/4$ gives
+
+\[
+\boxed{\Var\left(\frac{U+V}{2}\right)
+=\frac14\{\Var(U)+\Var(V)+2\Cov(U,V)\}.}
+\]
+Positive covariance increases the output variance; negative covariance reduces it. Covariance describes exactly the additional information needed to calculate the noise of this temporal filter.
+
+\paragraph{Removing the scale: the correlation coefficient.}
+Covariance has units equal to the product of the units of $U$ and $V$. Doubling the amplitude of one voltage doubles their covariance, even if their pattern of dependence is unchanged. Dividing by the two standard deviations removes this scale dependence. For positive variances, the \emph{Pearson correlation coefficient} is
+\[
+\rho_{UV}=\frac{\Cov(U,V)}{\sigma_U\sigma_V},
+\qquad \sigma_U=\sqrt{\Var(U)},\quad \sigma_V=\sqrt{\Var(V)}.
+\]
+It lies between $-1$ and $1$. To see the bound, normalize the centered variables: $u=U_c/\sigma_U$, $v=V_c/\sigma_V$. Then $\E[u^2]=\E[v^2]=1$ and $\E[uv]=\rho_{UV}$. Nonnegative squared deviations give
+\[
+0\leq\E[(u-v)^2]=2-2\rho_{UV},\qquad
+0\leq\E[(u+v)^2]=2+2\rho_{UV},
+\]
+so $-1\leq\rho_{UV}\leq1$. The adjacent-sample coefficients of the persistent, independent, and alternating examples are respectively $+1$, $0$, and $-1$.
+
+Zero covariance means that the centered product averages to zero. Independence guarantees this cancellation, but cancellation alone does not guarantee independence. For example, if $U$ takes $-1$, $0$, and $1$ with equal probability and $V=U^2$, then $\E[U]=\E[U^3]=0$ and
+\[
+\Cov(U,V)=\E[U^3]-\E[U]\E[U^2]=0.
+\]
+Nevertheless, $U$ determines $V$ exactly. For jointly Gaussian variables, zero covariance does imply independence.
+
+\paragraph{Applying the definitions across time.}
+For a random process, the two variables can be samples at fixed times:
+$U(s)=X(t_1,s)$ and $V(s)=X(t_2,s)$. Their product average is called \emph{autocorrelation}; their covariance is called \emph{autocovariance}:
+\begin{align}
+R_X(t_1,t_2)&=\E[X(t_1)X(t_2)],\label{eq:autocorr}\\
+C_X(t_1,t_2)&=\E[(X(t_1)-\mu_X(t_1))(X(t_2)-\mu_X(t_2))]\notag\\
+&=R_X(t_1,t_2)-\mu_X(t_1)\mu_X(t_2).
+\label{eq:covariance}
+\end{align}
+The prefix \emph{auto} indicates that both samples belong to the same process. The \emph{lag} $\tau=t_2-t_1$ is their time separation. These are functions of the chosen times; their expectation still averages over outcomes, not over time. Autocorrelation retains the mean contribution, whereas autocovariance isolates the fluctuations. In particular,
+\[
+R_X(t,t)=\E[X(t)^2],\qquad C_X(t,t)=\Var(X(t)).
+\]
+For a zero-mean process they coincide at every pair of times.
+
+Unlike the Pearson coefficient $\rho$, the autocorrelation $R_X$ is unnormalized and retains units of voltage squared.
+
+\begin{derivation}[title={Further connection: covariance and linear prediction}]
+Suppose the centered voltage $U_c$ is used to predict $V_c$ by $bU_c$. Its mean-square prediction error is
+\[
+\E[(V_c-bU_c)^2]
+=\Var(V)-2b\Cov(U,V)+b^2\Var(U).
+\]
+For $\Var(U)>0$, differentiation with respect to $b$ gives
+\[
+b_{\mathrm{opt}}=\frac{\Cov(U,V)}{\Var(U)},\qquad
+\E[(V_c-b_{\mathrm{opt}}U_c)^2]
+=\Var(V)-\frac{\Cov(U,V)^2}{\Var(U)}.
+\]
+The covariance determines how much a linear predictor can reduce the error. When it is zero, the best centered linear prediction is zero, even though nonlinear dependence may remain. The correlated voltage--current noise model in Chapter~5 uses the same idea at each frequency.
+\end{derivation}
+
+The two-tap average illustrates the time-domain role of correlation. After introducing spectra, we will revisit its frequency response in Section~\ref{sec:two-tap-spectrum}.
+
+\subsection{Stationarity and ergodicity}
+Two different questions arise in a noise measurement. Do the statistical properties change during the experiment? Can one sufficiently long record recover those properties? Stationarity addresses the first question; ergodicity addresses the second.
+\label{sec:ergodicity}
+\begin{concept}[title={Wide-sense stationarity}]
+A real process with finite second moments is wide-sense stationary (WSS) if, for every time $t$ and lag $\tau$,
+\[
+\mu_X(t)=\mu,\qquad R_X(t,t+\tau)=R_X(\tau).
+\]
+Its autocovariance is $C_X(\tau)=R_X(\tau)-\mu^2$.
+\end{concept}
+WSS is a statement about \emph{ensemble} first and second moments. It does not make different times independent. Strict stationarity requires all joint distributions, rather than only the mean and autocorrelation, to be unchanged by a common time shift. Neither form of stationarity guarantees that a single record represents the ensemble.
+
+For each fixed duration $T>0$, define the time-average \emph{estimator}
+\begin{equation}
+\overline X_T(s)=\frac1T\int_0^T X(t,s)\dd t.
+\label{eq:time-estimator}
+\end{equation}
+Once a record is observed, $\overline x_T(s_i)$ is a number computed along that record. Before the outcome is observed, $\overline X_T$ is itself a random variable: different records give different estimates. Consequently $\E[\overline X_T]$ is an ensemble average of many possible time-average estimates. It must not be confused with the temporal integration inside each estimate.
+\EnsembleFigure
+
+\paragraph{Using a time average to estimate the ensemble mean.}
+The ensemble mean $\mu$ is a property of the process, but a measurement usually supplies only one record. The time average $\overline X_T(s)$ is therefore used as an \emph{estimate} of $\mu$. For a particular record $s_i$, its estimation error is
+\[
+e_T(s_i)=\overline X_T(s_i)-\mu.
+\]
+Another possible record generally gives another error. Reliability cannot be judged from the signed average of those errors alone: positive and negative errors may cancel even when individual estimates are inaccurate. Squaring each error before averaging avoids that cancellation.
+
+The \emph{mean-square error} (MSE) is the probability-weighted average of the squared estimation errors over all possible records:
+\begin{equation}
+\boxed{\operatorname{MSE}(T)=\E[|e_T|^2]
+=\E[|\overline X_T-\mu|^2].}
+\label{eq:mean-mse}
+\end{equation}
+The integral in $\overline X_T$ averages \emph{within one record}; the expectation in the MSE averages \emph{across possible records}. MSE measures error in the estimated mean, not the voltage's own variance. Its square root is the RMS estimation error, in volts.
+
+Mean ergodicity asks whether a longer observation can make this error arbitrarily small.
+
+\begin{concept}[title={Mean ergodicity}]
+A WSS process is \emph{mean ergodic in mean square} if its time-average estimate of the ensemble mean has vanishing MSE:
+\begin{equation}
+\lim_{T\to\infty}\E[|\overline X_T-\mu|^2]=0.
+\label{eq:mean-ergodic}
+\end{equation}
+This is a statement about estimation accuracy across the ensemble as record duration grows. It does not require any finite record to have exactly the ensemble mean, nor does stationarity alone guarantee it.
+\end{concept}
+
+\paragraph{Error probability.}
+An EE measurement often specifies an allowed error $\epsilon$, such as $10\,\mu$V. The probability
+$P\{|\overline X_T-\mu|\geq\epsilon\}$ is the fraction of possible records, weighted by their probabilities, whose mean estimates miss the target by at least that tolerance. For any fixed $\epsilon>0$,
+\[
+\boxed{P\{|\overline X_T-\mu|\geq\epsilon\}
+\leq\frac{\operatorname{MSE}(T)}{\epsilon^2}.}
+\]
+The bound follows because every such record contributes at least $\epsilon^2$ to the squared error. Consequently, if MSE tends to zero, the probability of exceeding any fixed tolerance also tends to zero. For example, an RMS estimation error of $1\,\mu$V bounds the probability of an error of at least $10\,\mu$V by $(1/10)^2=0.01$.
+
+This is a Chebyshev-type bound; Appendix~\ref{app:chebyshev} proves it from the nonnegative squared error. Mean-square convergence implies convergence in probability, but is distinct from convergence along almost every individual record. The latter, stronger pathwise question is discussed in Appendix~\ref{app:convergence}.
+
+The persistent process $X(t,s)=A(s)$ is stationary, with ensemble mean zero and $C_X(\tau)=1\,\mathrm{V}^2$. Yet $\overline X_T(s)=A(s)$ for every $T$ and
+$\E[|\overline X_T|^2]=1\,\mathrm{V}^2$. It is not mean ergodic: observing the same sign for longer cannot reveal the equally probable opposite sign in other outcomes.
+
+\subsection{Estimating the ensemble mean from a time average}
+\label{sec:mean-proof}
+We now express the estimation error in terms of the covariance. First, the WSS time average is unbiased:
+\begin{align*}
+\E[\overline X_T]
+&=\frac1T\int_0^T\E[X(t)]\dd t
+=\frac1T\int_0^T\mu\dd t=\mu.
+\end{align*}
+The expectation and time integral can be exchanged because finite mean-square voltage implies $\E|X(t)|\leq\sqrt{\E[X(t)^2]}$, a finite constant on this interval (Appendix~\ref{app:integration}). Unbiasedness means that estimates average to $\mu$ across repeated records, not that each estimate equals $\mu$.
+
+Set $Z(t)=X(t)-\mu$, so $\E[Z(t)]=0$. The estimation error is the time average of $Z$. Expanding its square gives
+\begin{align*}
+\operatorname{MSE}(T)
+&=\E[|\overline X_T-\mu|^2]\\
+&=\frac1{T^2}\E\left[\int_0^T\!\int_0^T Z(t)Z(u)\dd u\dd t\right]\\
+&=\frac1{T^2}\int_0^T\!\int_0^T C_X(t-u)\dd u\dd t.
+\end{align*}
+The expectation and time integrals can be exchanged because
+$\E|Z(t)Z(u)|\leq C_X(0)$, giving a finite absolute integral on the square.
+
+\paragraph{Integrating over lag.}
+For real WSS noise, shifting both sample times and reversing their order gives
+\[
+C_X(-\tau)=\E[Z(t)Z(t-\tau)]
+=\E[Z(t+\tau)Z(t)]=C_X(\tau).
+\]
+The covariance is therefore even, so the two halves of the square $0\leq t,u\leq T$ contribute equally. On the lower half, set $\tau=t-u$:
+\[
+0\leq u\leq t\leq T
+\quad\longrightarrow\quad
+0\leq\tau\leq t\leq T.
+\]
+At fixed lag $\tau$, $t$ ranges from $\tau$ to $T$, as shown in Figure~\ref{fig:mean-regions}. Thus
+\begin{align}
+\operatorname{MSE}(T)
+&=\frac2{T^2}\int_0^T\int_0^t C_X(t-u)\dd u\dd t\notag\\
+&=\frac2{T^2}\int_0^T\int_0^t C_X(\tau)\dd\tau\dd t\notag\\
+&=\frac2{T^2}\int_0^T\int_\tau^T C_X(\tau)\dd t\dd\tau\notag\\
+&=\boxed{\frac2{T^2}\int_0^T(T-\tau)C_X(\tau)\dd\tau.}
+\label{eq:mean-var}
+\end{align}
+The weight $T-\tau$ is the available interval for sample pairs separated by lag $\tau$.
+\MeanErrorRegionsFigure
+
+\paragraph{Why temporal correlation determines averaging accuracy.}
+For noise with short correlation time, widely separated parts of a record contribute weakly related fluctuations. A longer record then averages over more such fluctuations, reducing the estimation error. If the noise remains strongly correlated throughout the observation, extending the record mostly repeats information already present. The relevant quantity is the autocovariance, not how jagged or smooth one waveform appears.
+
+A useful sufficient condition is finite absolute covariance area:
+\[
+\int_0^\infty|C_X(\tau)|\dd\tau<\infty.
+\]
+In Eq.~\eqref{eq:mean-var}, replace $C_X$ by its absolute value and use $T-\tau\leq T$. Then
+\[
+0\leq\operatorname{MSE}(T)
+\leq\frac2T\int_0^T|C_X(\tau)|\dd\tau
+\leq\frac2T\int_0^\infty|C_X(\tau)|\dd\tau\longrightarrow0.
+\]
+The final area is fixed, so the bound decreases as $1/T$. This condition is sufficient, not necessary: positive and negative correlations can also cancel. The exact criterion is the limit of Eq.~\eqref{eq:mean-var}. Figure~\ref{fig:correlation-averaging} compares short correlation, long correlation, and a persistent random offset.
+
+\CorrelationAveragingFigure
+
+\paragraph{Exponential covariance: the role of correlation time.}
+For $C_X(\tau)=\sigma^2e^{-a|\tau|}$, $a>0$, use integration by parts with $u=T-\tau$ and $\dd v=e^{-a\tau}\dd\tau$:
+\begin{align*}
+\int_0^T(T-\tau)e^{-a\tau}\dd\tau
+&=\left[-\frac{T-\tau}{a}e^{-a\tau}\right]_0^T
+-\frac1a\int_0^T e^{-a\tau}\dd\tau\\
+&=\frac{T}{a}-\frac{1-e^{-aT}}{a^2}.
+\end{align*}
+
+Substitution into Eq.~\eqref{eq:mean-var} yields
+\begin{equation}
+\operatorname{MSE}(T)=\frac{2\sigma^2}{aT}
+\left[1-\frac{1-e^{-aT}}{aT}\right].
+\end{equation}
+For $aT\ll1$, $e^{-aT}=1-aT+(aT)^2/2+O((aT)^3)$, so the MSE tends to $\sigma^2$: a short record contains strongly correlated samples. For $aT\gg1$ the MSE is approximately $2\sigma^2/(aT)$. Equating this to the variance $\sigma^2/N$ of $N$ independent observations defines a variance-equivalent sample count $N_{\mathrm{eff}}\simeq aT/2$. It is a comparison of estimation errors, not a claim that correlated samples become literally independent.
+
+\begin{example}[title={How long must a record be to estimate the mean?}]
+Suppose a zero-mean voltage has RMS fluctuation $\sigma=1$ mV and correlation time $1/a=1\,\mu$s. For a $1$-ms record, $aT=1000$, so
+\[
+\sqrt{\operatorname{MSE}(T)}
+\simeq\sigma\sqrt{\frac{2}{aT}}
+=44.7\,\mu\mathrm V.
+\]
+The mean of an individual trace need not be zero; its typical estimation error is about $45\,\mu$V. Making the record ten times longer reduces this RMS error by $\sqrt{10}$, rather than by ten. Sampling the same record more densely does not supply the same benefit, because nearby samples remain correlated.
+\end{example}
+
+For $X(t)=A+W(t)$, where $A$ is an independent random offset of variance $\sigma_A^2$ and $W$ has mean zero and integrable covariance,
+$C_X(\tau)=\sigma_A^2+C_W(\tau)$. Equation~\eqref{eq:mean-var} then gives
+$\operatorname{MSE}(T)=\sigma_A^2+\operatorname{MSE}_W(T)\to\sigma_A^2$.
+A longer record cannot average away the outcome-specific offset. Subtracting each record's mean intentionally removes this information from a spectral estimate.
+
+\subsection{Correlation ergodicity}
+\label{sec:corr-ergodicity}
+A PSD is determined by second-order statistics, so consistent estimation of the mean alone is insufficient. For fixed $\tau\geq0$, define
+\[
+\widehat R_T(\tau,s)=\frac1T\int_0^T X(t,s)X(t+\tau,s)\dd t.
+\]
+The estimator requires a record on $[0,T+\tau]$. The process is \emph{correlation ergodic in mean square at lag $\tau$} when
+\begin{equation}
+\E[|\widehat R_T(\tau)-R_X(\tau)|^2]\longrightarrow0.
+\end{equation}
+For covariance, the mean is subtracted before forming products. If the mean is estimated from the record, that estimation error must also be accounted for.
+
+To estimate correlation at lag $\tau$, average products of samples separated by that lag. The product $X(t)X(t+\tau)$ fluctuates from one time pair to another, just as $X(t)$ itself fluctuates. Correlation averaging succeeds when these product fluctuations lose their dependence over sufficiently long time separations. Decay of the original voltage covariance alone is not enough: the error of a product average involves products of four voltage samples.
+
+\paragraph{A sufficient condition.}
+Treat the sample product as a new random process:
+\[
+Q_\tau(t)=X(t)X(t+\tau),\qquad
+K_\tau(u)=\Cov(Q_\tau(t),Q_\tau(t+u)).
+\]
+Here $\tau$ separates the samples within a pair; $u$ separates two pairs. For a stationary process with finite fourth moment, $Q_\tau$ has stationary, finite-variance statistics. Its mean is $R_X(\tau)$, so estimating correlation is the mean-estimation problem applied to $Q_\tau$. Equation~\eqref{eq:mean-var} therefore gives
+\[
+\E|\widehat R_T(\tau)-R_X(\tau)|^2
+\leq\frac2T\int_0^\infty|K_\tau(u)|\dd u.
+\]
+Thus finite absolute product-covariance area ensures correlation ergodicity at that lag. Gaussianity is not required. It is enough for $X$ to be WSS and $Q_\tau$ to have the stationary statistics used here; full stationarity is a convenient stronger assumption. Appendix~\ref{app:correlation-proof} develops the fourth-order and sampled-data details.
+
+The test concerns the measured, bandwidth-limited output, including correlations among sources. Thermal noise, filtered shot noise, and random-telegraph noise can satisfy it under suitable models. Drift, random offsets, and persistent noise-intensity variations can prevent product-covariance decay. An ideal $1/f$ law extending to zero lacks finite variance; ideal white noise needs filtering before this finite-moment test applies.
+
+\paragraph{The Gaussian RC model as an example.}
+For a zero-mean stationary Gaussian process with exponential covariance
+$C_X(\tau)=\sigma^2e^{-a|\tau|}$, both kinds of fluctuations decay. The correlation estimate satisfies
+\[
+\E[|\widehat R_T(\tau)-R_X(\tau)|^2]\leq\frac{2\sigma^4}{aT}.
+\]
+The error vanishes for every fixed lag. For Gaussian noise, voltage covariance determines product covariance; more generally, $\int_{\mathbb R}C_X(u)^2\dd u<\infty$ is sufficient. Appendix~\ref{app:correlation-proof} derives the bound, and Appendix~\ref{app:almost-sure} gives an optional almost-sure proof for sampled Gaussian RC noise.
+
+To see why voltage-covariance decay alone is insufficient, let $X_n=B W_n$, where $W_n$ are independent fair signs and $B$ is independently selected once as $1$ or $2$ V with equal probability. Then $\E X_n=0$ and
+$\Var(N^{-1}\sum X_n)=\E[B^2]/N\to0$.
+But $N^{-1}\sum X_n^2=B^2$ for every record, whereas $R_X[0]=\E[B^2]=2.5\,\mathrm{V}^2$. The process is mean ergodic but not correlation ergodic: a single record retains a random noise intensity. Correlation ergodicity alone does not make the raw periodogram consistent (Section~\ref{sec:psd-measurement}).
+
+

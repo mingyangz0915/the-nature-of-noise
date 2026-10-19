@@ -1,0 +1,328 @@
+
+\section{From correlation to spectral density}
+\subsection{Fourier representation and finite observation}
+For a finite pulse, the Fourier transform describes how its energy is distributed over frequency. Noise persists throughout an observation, so its accumulated energy increases with record duration. A noise PSD instead describes mean-square voltage per unit bandwidth. The normalization by record duration makes that distinction precise.
+For a deterministic waveform, Fourier transformation separates temporal dependence into sinusoidal components. With $f$ in hertz and $j^2=-1$, our transform convention is
+\begin{equation}
+\widehat x(f)=\int_{\mathbb R}x(t)e^{-j2\pi ft}\dd t,\qquad
+x(t)=\int_{\mathbb R}\widehat x(f)e^{j2\pi ft}\dd f.
+\label{eq:fourier}
+\end{equation}
+The inverse formula applies when the waveform satisfies the usual Fourier inversion conditions; finite-energy signals also admit a mean-square interpretation. The factor $2\pi$ converts cycles per second to radians per second.
+
+\begin{concept}[title={Parseval--Plancherel theorem}]
+For a finite-energy waveform, $\int_{\mathbb R}|x(t)|^2\dd t<\infty$, its Fourier transform satisfies
+\begin{equation}
+\boxed{\int_{\mathbb R}|x(t)|^2\dd t
+=\int_{\mathbb R}|\widehat x(f)|^2\dd f.}
+\label{eq:parseval}
+\end{equation}
+There is no $2\pi$ factor with the hertz convention in Eq.~\eqref{eq:fourier}. The two integrals measure the same signal energy in different coordinates. For a voltage waveform, this signal-energy quantity has units V$^2\cdot$s; division by a resistance converts it to physical energy in joules.
+\end{concept}
+For a smooth finite-support waveform, substitute the inverse transform for the second factor:
+\begin{align*}
+\int x(t)^*x(t)\dd t
+&=\int x(t)^*\left[\int\widehat x(f)e^{j2\pi ft}\dd f\right]\dd t\\
+&=\int\widehat x(f)\left[\int x(t)^*e^{j2\pi ft}\dd t\right]\dd f\\
+&=\int|\widehat x(f)|^2\dd f.
+\end{align*}
+The middle step exchanges the integration order; the bracket is $\widehat x(f)^*$. Approximation extends this argument to all finite-energy waveforms.
+
+For WSS noise with finite mean square $R_X(0)=\E[X(t)^2]$, a duration-$T$ record has expected squared-voltage integral
+\[
+\E\left[\int_0^T X(t)^2\dd t\right]
+=\int_0^T\E[X(t)^2]\dd t=T R_X(0).
+\]
+The expectation can pass through the integral because the squared voltage is nonnegative. When $R_X(0)>0$, the expected squared-voltage integral grows with $T$; an infinite noise record is not generally a finite-energy signal. However, its windowed transform is well defined:
+\begin{equation}
+X_T(f,s)=\int_0^T X(t,s)e^{-j2\pi ft}\dd t.
+\end{equation}
+\paragraph{From spectral energy to spectral density per unit time.}
+Parseval applied to a particular windowed record gives
+\[
+\int_{-\infty}^{\infty}|X_T(f,s)|^2\dd f
+=\int_0^T X(t,s)^2\dd t.
+\]
+Thus $|X_T(f,s)|^2$ distributes the record's squared-voltage integral over frequency. Its area grows with observation duration. Dividing by $T$ instead gives a density whose area is the record's \emph{time-average mean-square voltage}. This defines the two-sided periodogram:
+\begin{equation}
+I_T(f,s)=\frac{|X_T(f,s)|^2}{T},\qquad
+\boxed{\int_{-\infty}^{\infty}I_T(f,s)\dd f
+=\frac1T\int_0^T X(t,s)^2\dd t.}
+\label{eq:periodogram-area}
+\end{equation}
+The voltage periodogram has units V$^2$/Hz. Dividing it by a resistance converts it to a power density in W/Hz.
+
+\paragraph{Why average across the ensemble?}
+Different records have different periodograms. Their ensemble average,
+\[
+\overline I_T(f)=\E[I_T(f,\cdot)],
+\]
+describes the spectral distribution of the process at observation duration $T$. The square is taken before averaging: opposite-sign records have opposite Fourier transforms but identical spectral energies. Averaging the transforms first would cancel them.
+
+Taking the ensemble expectation of Eq.~\eqref{eq:periodogram-area} gives
+\begin{align}
+\int_{-\infty}^{\infty}\overline I_T(f)\dd f
+&=\E\left[\int_{-\infty}^{\infty}I_T(f)\dd f\right]\notag\\
+&=\frac1T\int_0^T\E[X(t)^2]\dd t\notag\\
+&=\boxed{R_X(0).}
+\label{eq:finite-spectrum-area}
+\end{align}
+The exchanges are valid because the squared quantities are nonnegative; WSS makes $\E[X(t)^2]=R_X(0)$ independent of time. For \emph{every finite $T$}, the ensemble-averaged periodogram therefore has the correct total mean-square voltage. Finite observation changes how that area is distributed over frequency, not its total.
+
+\paragraph{The PSD as the long-record limit.}
+Increasing $T$ improves frequency resolution. When an ordinary limiting density exists, define
+\begin{equation}
+\boxed{S_X^{(2)}(f)=\lim_{T\to\infty}\overline I_T(f)
+=\lim_{T\to\infty}\frac1T\E[|X_T(f)|^2].}
+\label{eq:psd}
+\end{equation}
+The PSD is nonnegative and describes the ensemble rather than a particular record. Its integral over a band gives the mean-square voltage passed by ideal band selection; Chapter~4 includes general circuit weighting.
+
+The finite-record area identity does not, by itself, justify exchanging the limit and the frequency integral. Under the Wiener--Khinchin and inversion conditions established next, the limiting PSD also satisfies
+$\int S_X^{(2)}(f)\dd f=R_X(0)$. DC and tones contribute spectral masses rather than ordinary finite densities (Section~\ref{sec:spectral-lines}).
+
+The expectation defining PSD remains an ensemble average. Ergodicity is not required to define it; conditions for estimating it from one record are developed in Section~\ref{sec:psd-measurement}.
+
+\Needspace{5\baselineskip}
+\subsection{The Wiener--Khinchin theorem}
+\begin{concept}[title={Wiener--Khinchin theorem for integrable autocorrelation}]
+Let $X$ be real, zero-mean, WSS, with finite second moment, and assume $R_X$ is absolutely integrable. Then the density defined in Eq.~\eqref{eq:psd} is
+\begin{equation}
+\boxed{S_X^{(2)}(f)=\int_{\mathbb R}R_X(\tau)e^{-j2\pi f\tau}\dd\tau.}
+\label{eq:wk}
+\end{equation}
+For the inverse formula below, assume also that the total spectral area is finite and the autocorrelation is continuous at the lag considered. Exponential correlation satisfies these conditions. DC and tones require spectral lines in addition to an ordinary density.
+\end{concept}
+
+\paragraph{Expanding the squared transform.}
+Multiplying the windowed transform by its conjugate and taking the ensemble expectation gives
+\begin{align}
+\E[|X_T(f)|^2]
+&=\E\left[\int_0^T\!\int_0^T X(t_1)X(t_2)e^{-j2\pi f(t_1-t_2)}\dd t_1\dd t_2\right]\notag\\
+&=\int_0^T\!\int_0^T R_X(t_1-t_2)e^{-j2\pi f(t_1-t_2)}\dd t_1\dd t_2.
+\label{eq:wk-square}
+\end{align}
+The exchange is valid because $\E|X(t_1)X(t_2)|\leq R_X(0)$ on the finite square. For a real WSS process, shifting both times and reversing the product gives $R_X(-\tau)=R_X(\tau)$.
+
+\paragraph{Changing variables and the integration region.}
+Set $u=t_2$ and $\tau=t_1-t_2$, so $t_1=u+\tau$. The area element is unchanged. The square $0\leq t_1,t_2\leq T$ becomes
+\[
+0\leq u\leq T,\qquad -u\leq\tau\leq T-u.
+\]
+Figure~\ref{fig:wk-regions} shows this region. At fixed lag, the allowed interval for $u$ is
+\[
+\begin{cases}
+-\tau\leq u\leq T,&-T\leq\tau\leq0,\\
+0\leq u\leq T-\tau,&0\leq\tau\leq T.
+\end{cases}
+\]
+Both intervals have length $T-|\tau|$. Integrating over $u$ therefore gives
+\begin{equation}
+\E[|X_T(f)|^2]
+=\int_{-T}^T(T-|\tau|)R_X(\tau)e^{-j2\pi f\tau}\dd\tau.
+\label{eq:triangle}
+\end{equation}
+The weight counts the observation interval available to pairs separated by lag $\tau$, just as in the mean-error calculation.
+
+\WKRegionsFigure
+\paragraph{Taking the long-record limit.}
+Divide by $T$ and write $w_T(\tau)=1-|\tau|/T$ for $|\tau|\leq T$, zero otherwise:
+\[
+\overline I_T(f)=\int_{\mathbb R}w_T(\tau)R_X(\tau)e^{-j2\pi f\tau}\dd\tau.
+\]
+For each fixed lag, $w_T(\tau)\to1$, while $|w_T(\tau)R_X(\tau)|\leq|R_X(\tau)|$. Since $\int|R_X(\tau)|\dd\tau<\infty$, this single integrable bound permits taking the limit through the integral (dominated convergence, Appendix~\ref{app:integration}). The result is Eq.~\eqref{eq:wk}.
+
+
+
+Under the additional inversion conditions stated with the theorem,
+\[
+R_X(\tau)=\int_{\mathbb R}S_X^{(2)}(f)e^{j2\pi f\tau}\dd f.
+\]
+Set $\tau=0$ to obtain
+\begin{equation}
+\boxed{\E[X(t)^2]=R_X(0)=\int_{\mathbb R}S_X^{(2)}(f)\dd f.}
+\label{eq:area}
+\end{equation}
+The area under a voltage PSD is ensemble mean-square voltage. Nonzero means add DC spectral mass; stationary tones add line masses. Their correlations do not decay to zero, so their spectral masses are kept separately from the continuous density.
+
+\Needspace{5\baselineskip}
+\Needspace{5\baselineskip}
+\subsection{Spectral estimation from a single record}
+\label{sec:psd-measurement}
+For one measured record, the periodogram $I_T(f)=|X_T(f)|^2/T$ is a natural estimate of the ensemble PSD. Its accuracy depends on two distinct effects: finite-window bias and random scatter. We examine both, then show how averaging reduces the scatter.
+
+\paragraph{Finite-window bias.}
+The rectangular observation window has transform
+\[
+W_T(\nu)=\int_0^T e^{-j2\pi\nu t}\dd t
+=e^{-j\pi\nu T}T\operatorname{sinc}(T\nu),
+\]
+where $\operatorname{sinc}(x)=\sin(\pi x)/(\pi x)$ and $\operatorname{sinc}(0)=1$. To find its effect, insert
+$R_X(\tau)=\int S_X^{(2)}(\lambda)e^{j2\pi\lambda\tau}\dd\lambda$
+into Eq.~\eqref{eq:wk-square}. The time factors separate:
+\[
+\int_0^T\!\int_0^T e^{-j2\pi(f-\lambda)(t_1-t_2)}\dd t_1\dd t_2
+=W_T(f-\lambda)W_T(f-\lambda)^*.
+\]
+Finite spectral area permits exchanging the integrals. Dividing by $T$ gives
+\begin{align*}
+\overline I_T(f)
+&=\int_{\mathbb R}S_X^{(2)}(\lambda)
+\frac{|W_T(f-\lambda)|^2}{T}\dd\lambda\\
+&=(S_X^{(2)}*K_T)(f),\qquad K_T(\nu)=T\operatorname{sinc}^2(T\nu).
+\end{align*}
+Here $*$ denotes convolution: nearby spectral values are mixed by the window kernel. Parseval for the unit-height window gives $\int K_T(\nu)\dd\nu=T^{-1}\int_0^T1\dd t=1$. Thus total area is preserved, but spectral features are blurred. The main-lobe width is of order $1/T$, and sidelobes cause leakage. A longer record narrows this kernel; it does not necessarily reduce random scatter.
+
+\paragraph{Periodogram error.}
+As with mean estimation, assess the error across possible records:
+
+\[
+\operatorname{MSE}_T(f)
+=\E[|I_T(f)-S_X^{(2)}(f)|^2].
+\]
+Write the error as $(I_T-\overline I_T)+(\overline I_T-S_X^{(2)})$. The first term has zero ensemble mean, so the cross term vanishes when its square is averaged:
+\[
+\boxed{\operatorname{MSE}_T(f)
+=\underbrace{\Var[I_T(f)]}_{\text{record-to-record scatter}}
++\underbrace{|\overline I_T(f)-S_X^{(2)}(f)|^2}_{\text{squared window bias}}.}
+\]
+The preceding convolution calculation determines the bias. Even if that bias tends to zero, a reliable estimate also requires the variance to vanish. A longer record alone need not achieve this, as the following example shows.
+
+\paragraph{A white-noise example with zero bias.}
+Take $N$ independent Gaussian samples $X_n$ of mean zero and variance $\sigma^2$, spaced by $\Delta t$, with record duration $T=N\Delta t$. Their two-sided sampled PSD is
+$S_0=\sigma^2\Delta t$ within the Nyquist band. At an interior FFT bin $f_m=m/(N\Delta t)$, excluding DC and Nyquist when present, define
+\[
+D_m=\sum_{n=0}^{N-1}X_ne^{-j2\pi mn/N},\qquad
+I_{N,m}=\frac{\Delta t}{N}|D_m|^2.
+\]
+This normalization is the sampled version of $|X_T|^2/T$: the transform sum approximates $X_T$ with a factor $\Delta t$.
+
+To find the estimation error, first separate the FFT coefficient into real and imaginary parts:
+\[
+D_m=U_m-jV_m,\qquad
+U_m=\sum_nX_n\cos\frac{2\pi mn}{N},\quad
+V_m=\sum_nX_n\sin\frac{2\pi mn}{N}.
+\]
+Independence of the samples removes cross terms between distinct $n$. Discrete sine and cosine orthogonality then gives
+\begin{align*}
+\Var(U_m)&=\sigma^2\sum_n\cos^2\frac{2\pi mn}{N}=\frac{N\sigma^2}{2},\\
+\Var(V_m)&=\sigma^2\sum_n\sin^2\frac{2\pi mn}{N}=\frac{N\sigma^2}{2},\\
+\Cov(U_m,V_m)&=\sigma^2\sum_n
+\cos\frac{2\pi mn}{N}\sin\frac{2\pi mn}{N}=0.
+\end{align*}
+Since $U_m,V_m$ are jointly Gaussian, they are independent. Thus
+$U_m=\sqrt{N\sigma^2/2}\,Z_1$ and $V_m=\sqrt{N\sigma^2/2}\,Z_2$ for independent unit normal variables, giving
+\[
+I_{N,m}=\frac{S_0}{2}(Z_1^2+Z_2^2).
+\]
+Using $\E[Z_j^2]=1$ and $\Var(Z_j^2)=2$,
+\[
+\E[I_{N,m}]=S_0,\qquad
+\Var(I_{N,m})=\frac{S_0^2}{4}(2+2)=S_0^2.
+\]
+The bias is exactly zero, yet
+\[
+\boxed{\E[(I_{N,m}-S_0)^2]=S_0^2,\qquad
+\frac{\sqrt{\operatorname{MSE}(I_{N,m})}}{S_0}=1.}
+\]
+The RMS estimation error equals the true PSD, regardless of $N$. Increasing record duration adds more closely spaced frequency bins, but does not reduce the relative error of each raw bin. Eliminating bias therefore does not make the raw periodogram consistent.
+
+\paragraph{Reducing the error by averaging.}
+Average $M$ independent periodograms at the same frequency:
+\[
+\widehat S_M=\frac1M\sum_{r=1}^M I_{N,m}^{(r)}.
+\]
+For this white Gaussian model, independence gives
+\[
+\E[\widehat S_M]=S_0,\qquad
+\operatorname{MSE}(\widehat S_M)
+=\Var(\widehat S_M)=\frac{S_0^2}{M}.
+\]
+The relative RMS error is now $1/\sqrt M$. Figure~\ref{fig:periodogram-scatter} compares short and long single records with an average of 32 independent records.
+\PeriodogramScatterFigure
+
+Independent neighboring bins from one nonredundant half of this white-noise spectrum can also be averaged. For a colored spectrum, however, a wide averaging band can blur real frequency dependence. Increasing the number of averaged bins while shrinking their physical frequency span balances variance reduction against smoothing bias; at fixed sample interval, a typical regime is $M\to\infty$ with $M/N\to0$. Dependence between bins must also be accounted for outside the white Gaussian example.
+
+\subsection{Exponential correlation and the Lorentzian spectrum}\label{sec:lorentzian}
+For the zero-mean correlation $R_X(\tau)=\sigma^2e^{-a|\tau|}$, symmetry gives
+\begin{align}
+S_X^{(2)}(f)
+&=2\sigma^2\int_0^\infty e^{-a\tau}\cos(2\pi f\tau)\,\dd\tau\\
+&=\boxed{\frac{2a\sigma^2}{a^2+(2\pi f)^2}}.\label{eq:lorentzian}
+\end{align}
+The elementary integral follows by taking the real part of $\int_0^\infty e^{-(a+j2\pi f)\tau}\dd\tau=1/(a+j2\pi f)$. The spectrum is a Lorentzian. Its value falls to half its peak at $|f|=a/(2\pi)$, making the inverse relation between correlation time $1/a$ and spectral width explicit. To check the area, substitute $u=2\pi f/a$:
+\[
+\int_{-\infty}^{\infty}S_X^{(2)}(f)\,\dd f
+=\frac{\sigma^2}{\pi}\int_{-\infty}^{\infty}\frac{\dd u}{1+u^2}
+=\sigma^2.
+\]
+Increasing $a$ lowers the peak and widens the curve while leaving the area fixed. Figure~\ref{fig:lorentzian} shows this tradeoff on common axes.
+\CorrelationSpectrumFigure
+
+\subsection{Spectral conventions and noise models}
+For a real WSS process, $R_X(\tau)$ is even, so its two-sided PSD is even. Engineers often use a \emph{one-sided} continuous PSD for $f>0$:
+\begin{equation}
+S_X^{(1)}(f)=2S_X^{(2)}(f),\qquad
+\E[X^2]=\int_0^\infty S_X^{(1)}(f)\,\dd f.\label{eq:onesided}
+\end{equation}
+The doubling accounts for the equal negative-frequency contribution. A DC impulse is counted once, and nonzero-mean or line components should be stated separately. In this text, resistor and MOS noise formulas use \emph{one-sided} PSDs. An amplitude spectral density (ASD) is $\sqrt{S_v}$, with units V/$\sqrt{\mathrm{Hz}}$; it must not be confused with $S_v$ in V$^2$/Hz.
+
+\begin{concept}[title={Whiteness and Gaussianity}]
+\textbf{White} means that the PSD is flat over the frequency range under discussion. \textbf{Gaussian} means that every finite vector $(X(t_1),\ldots,X(t_n))$ has a joint Gaussian distribution. A process may have either property without the other. Ideal white noise extending to infinite frequency has an impulse-shaped autocorrelation and infinite pointwise variance; it is a mathematical generalized process. A physical resistor's spectrum is approximately white only over a finite classical-frequency range.
+\end{concept}
+
+\subsection{Spectral lines and noise integration}
+\label{sec:spectral-lines}
+\begin{example}[title={A constant mean, a tone, and broadband noise}]
+Let $X(t)=m+A\cos(2\pi f_0t+\Phi)+W(t)$, where $\Phi$ is uniform on $[0,2\pi)$ and independent of zero-mean WSS noise $W$. Write $U(t)=A\cos(2\pi f_0t+\Phi)$. Averaging over the random phase gives
+\[
+\E[U(t)]=\frac{A}{2\pi}\int_0^{2\pi}\cos(2\pi f_0t+\phi)\dd\phi=0.
+\]
+The cross terms vanish by zero means and independence, leaving
+\[
+R_X(\tau)=m^2+\E[U(t)U(t+\tau)]+R_W(\tau).
+\]
+Using $\cos\alpha\cos\beta=\tfrac12[\cos(\alpha-\beta)+\cos(\alpha+\beta)]$,
+\begin{align*}
+\E[U(t)U(t+\tau)]
+&=\frac{A^2}{2}\cos(2\pi f_0\tau)
++\frac{A^2}{4\pi}\int_0^{2\pi}\cos(4\pi f_0t+2\pi f_0\tau+2\phi)\dd\phi\\
+&=\frac{A^2}{2}\cos(2\pi f_0\tau).
+\end{align*}
+The oscillating term averages to zero over the uniform phase. Hence
+\begin{align*}
+R_X(\tau)&=m^2+\frac{A^2}{2}\cos(2\pi f_0\tau)+R_W(\tau),\\
+S_X^{(2)}(f)&=m^2\delta(f)+\frac{A^2}{4}[\delta(f-f_0)+\delta(f+f_0)]+S_W^{(2)}(f).
+\end{align*}
+In a one-sided spectral \emph{measure}, the DC mass remains $m^2$, the positive-frequency tone mass becomes $A^2/2$, and the continuous positive-frequency density doubles. The total mean square is $m^2+A^2/2+\sigma_W^2$. A spectral line is represented by a mass. The DC mass is counted once, independently of endpoint conventions for integrals of ordinary densities.
+\end{example}
+\SpectrumConventionFigure
+Complex baseband processes can have asymmetric spectra. Cross spectra also retain relative phase, which matters when correlated sources combine in a circuit.
+
+\Needspace{5\baselineskip}
+\begin{example}[title={Noise integration from amplitude spectral density}]
+A flat one-sided voltage ASD of $5\,\mathrm{nV}/\sqrt{\mathrm{Hz}}$ corresponds to $25\times10^{-18}\,\mathrm{V^2/Hz}$. In an ideal rectangular band from $10\,\mathrm{kHz}$ to $110\,\mathrm{kHz}$,
+\[
+v_{n,\rms}=\sqrt{\int_{10^4}^{11\times10^4} (5\times10^{-9})^2\dd f}
+=1.58\,\mu\mathrm V.
+\]
+For $S_v(f)=S_w+K/f$ over $0<f_L\leq f\leq f_H$, integrate each term:
+\[
+\sigma_v^2=\int_{f_L}^{f_H}\left(S_w+\frac Kf\right)\dd f
+=S_w(f_H-f_L)+K\ln(f_H/f_L).
+\]
+Here $K$ has units V$^2$.
+At $f_c=K/S_w$, flicker and white densities are equal. Increasing bandwidth by a decade multiplies white variance by ten for a zero-based rectangular band, while each decade of $1/f$ adds $K\ln 10$.
+\end{example}
+A measured noise spectrum must specify the quantity reported (PSD, ASD, or power within a resolution bandwidth), the one-sided or two-sided convention, and the treatment of DC. A spectrum analyzer\textquotesingle s resolution bandwidth is the ENBW of its analysis filter. Section~\ref{sec:psd-measurement} gives the mathematical distinction between the ensemble spectrum and its finite-record estimate.
+Doubling an ASD quadruples its integrated variance at fixed bandwidth. Doubling observation duration narrows a stationary tone\textquotesingle s displayed peak while preserving its spectral mass; it does not by itself eliminate periodogram scatter.
+
+\paragraph{Revisiting the two-tap averager.}
+\label{sec:two-tap-spectrum}
+The filter from Section~\ref{sec:temporal-dependence} adds a sample and its delayed copy. A delay of one sample multiplies a sinusoid by $e^{-j\Omega}$, where $\Omega=2\pi fT_s$ is radians per sample. Hence
+\[
+H(e^{j\Omega})=\frac{1+e^{-j\Omega}}2
+=e^{-j\Omega/2}\cos(\Omega/2).
+\]
+Its squared gain is $\cos^2(\Omega/2)$: a persistent DC offset passes, whereas Nyquist alternation is rejected. For independent samples, the flat spectrum is weighted by this response; its average over $-\pi\leq\Omega\leq\pi$ is $1/2$, reproducing the variance reduction derived directly in Chapter~1.
+\FIRFigure

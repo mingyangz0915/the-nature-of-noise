@@ -1,0 +1,193 @@
+\clearpage
+\appendix
+\section{Mathematical supplements}
+\label{app:math}
+The main chapters use weighted averages, covariance, Fourier transforms, and finite-record error calculations. This appendix gives the underlying probability framework and the longer convergence proofs. The ensemble--time distinction and the RC results in the main text do not require prior study of measure theory.
+
+\subsection{Probability spaces and ensemble integration}
+\label{app:probability}
+The formal model is a \emph{probability space} $(\Omega,\mathcal F,P)$. Its sample space $\Omega$ contains the complete possible outcomes. The collection $\mathcal F$ of events is a sigma-algebra: it contains $\Omega$ and is closed under complements and countable unions. The probability measure $P$ is nonnegative, satisfies $P(\Omega)=1$, and is countably additive: for pairwise disjoint events $A_n$,
+\[
+P\!\left(\bigcup_{n=1}^{\infty}A_n\right)=\sum_{n=1}^{\infty}P(A_n).
+\]
+An outcome $s$ is an element of $\Omega$; an event is an element of $\mathcal F$, hence a subset of $\Omega$. In a continuous model, an individual outcome need not have positive probability.
+
+A real random variable is a measurable function $Z:\Omega\to\mathbb R$: the set $\{s:Z(s)\in B\}$ belongs to $\mathcal F$ for every Borel set $B$ of real numbers. Borel sets include intervals and the sets formed from them by countable unions and complements. It suffices to check $\{s:Z(s)\leq z\}\in\mathcal F$ for every real $z$. This condition makes probabilities involving $Z$ well defined.
+
+A random process is a family of random variables on this same space, one for each time. For the time integrals used in these notes, we assume the stronger regularity of a jointly measurable map
+\begin{equation}
+X:\mathbb R\times\Omega\longrightarrow\mathbb R,\qquad (t,s)\longmapsto X(t,s).
+\label{eq:formal-process}
+\end{equation}
+
+Ensemble expectation is probability integration:
+\[
+\E[Z]=\int_\Omega Z(s)P(\dd s).
+\]
+Here $P(\dd s)$ denotes probability weighting, not a time increment. On a finite sample space, the integral is $\sum_{s\in\Omega}Z(s)P(\{s\})$; if $Z$ has density $p_Z$ and finite absolute expectation, it is $\int zp_Z(z)\dd z$. Joint measurability makes the time--outcome integrals meaningful; exchanging their order requires the additional conditions stated next.
+
+\subsection{Exchanging averages, integrals, and limits}
+\label{app:integration}
+Fubini's theorem permits changing the order of two integrations when the integral of the absolute integrand is finite. An ensemble expectation is one such integration. Thus
+\[
+\int_0^T\E|X(t)|\dd t<\infty
+\quad\Longrightarrow\quad
+\E\left[\int_0^T X(t)\dd t\right]
+=\int_0^T\E[X(t)]\dd t.
+\]
+For a finite ensemble this is the exchange of a weighted sum and a time integral. Absolute integrability extends that familiar rule to general ensembles. Tonelli's theorem permits the order exchange for a nonnegative integrand even before finiteness is established.
+
+Dominated convergence concerns a different operation: passing a limit through an integral. If $g_T(u)\to g(u)$ pointwise and $|g_T(u)|\leq G(u)$ for a single function with $\int G(u)\dd u<\infty$, then $\lim\int g_T=\int g$. Pointwise convergence alone is insufficient: area can move to increasingly distant values of $u$. The integrable bound excludes that possibility. In the Wiener--Khinchin proof, $G(\tau)=|R_X(\tau)|$.
+
+\subsection{Chebyshev's inequality and estimation error}
+\label{app:chebyshev}
+Let $\widehat\mu$ be an estimate of a fixed target $\mu$, with finite $\E|\widehat\mu-\mu|^2$. For a tolerance $\epsilon>0$, define the event
+$A=\{|\widehat\mu-\mu|\geq\epsilon\}$. Its indicator $\mathbf1_A$ equals one when the error exceeds the tolerance and zero otherwise. For every outcome,
+\[
+|\widehat\mu-\mu|^2\geq\epsilon^2\mathbf1_A.
+\]
+On $A$, this is the definition of the event; outside $A$, it follows from nonnegativity of the square. Taking ensemble expectations gives
+\[
+\E|\widehat\mu-\mu|^2\geq\epsilon^2\E[\mathbf1_A]
+=\epsilon^2P(A).
+\]
+Dividing by $\epsilon^2$ proves
+\[
+P\{|\widehat\mu-\mu|\geq\epsilon\}
+\leq\frac{\E|\widehat\mu-\mu|^2}{\epsilon^2}.
+\]
+This is Markov's inequality for the nonnegative variable $|\widehat\mu-\mu|^2$. If the estimate is unbiased, $\E[\widehat\mu]=\mu$, its MSE is $\Var(\widehat\mu)$, and the result becomes the usual Chebyshev inequality.
+
+For a biased estimate, center it about its own mean and write $b=\E[\widehat\mu]-\mu$. The centered error has zero expectation, so its cross term with the constant $b$ vanishes. Hence
+\[
+\E|\widehat\mu-\mu|^2=\Var(\widehat\mu)+b^2.
+\]
+The MSE bound remains valid when bias is present.
+
+\subsection{Convergence and full ergodicity}
+\label{app:convergence}
+Mean-square convergence of estimates $Z_T$ to $z$ means $\E|Z_T-z|^2\to0$. Convergence in probability means that, for every $\epsilon>0$, $P\{|Z_T-z|>\epsilon\}\to0$. Mean-square convergence implies convergence in probability by the bound in Section~\ref{sec:ergodicity}.
+
+Almost-sure convergence means
+\[
+P\{s:\lim_{T\to\infty}Z_T(s)=z\}=1.
+\]
+It states convergence along individual realizations except for a set of probability zero. Mean-square convergence by itself does not imply almost-sure convergence of the full sequence, and almost-sure convergence by itself does not control mean-square error.
+
+For a strictly stationary process, full ergodicity means that every event invariant under time shifts has probability zero or one. An invariant event represents a persistent distinction between classes of records. In the persistent-sign example, the event that a record has positive sign is invariant and has probability $1/2$.
+
+Birkhoff's ergodic theorem states that, for an ergodic stationary process, time averages of integrable observables converge almost surely to their ensemble expectations. Without ergodicity, their limits can depend on invariant information carried by the realization. The theorem supplies a general route to time averaging; the following proofs verify the required conditions for the Gaussian RC model.
+
+\subsection{A general condition for correlation estimation}
+\label{app:correlation-proof}
+Define the product process $Q_\tau(t)=X(t)X(t+\tau)$ for a real WSS process. Finite fourth moments ensure finite product variance, since Cauchy--Schwarz gives
+\[
+\E[Q_\tau(t)^2]\leq\sqrt{\E[X(t)^4]\E[X(t+\tau)^4]}<\infty.
+\]
+The mean of $Q_\tau$ is $R_X(\tau)$. Stationarity through fourth order makes its covariance stationary. Applying the mean-error formula gives the bound stated in Section~\ref{sec:corr-ergodicity}. WSS of $X$ alone does not ensure these fourth-order statistics or product-covariance decay.
+
+For sampled data, the analogous condition is
+$\sum_{m=-\infty}^{\infty}|K_\tau[m]|<\infty$. For $N$ averaged products, expanding the squared error gives
+\[
+\operatorname{MSE}_N=\frac1{N^2}
+\sum_{m=-(N-1)}^{N-1}(N-|m|)K_\tau[m]
+\leq\frac1N\sum_{m=-\infty}^{\infty}|K_\tau[m]|\longrightarrow0.
+\]
+For independent samples at integer lag $\ell\geq0$, the products $X_nX_{n+\ell}$ and $X_{n+m}X_{n+m+\ell}$ are independent whenever their index sets are disjoint. This holds for $|m|>\ell$, so the covariance sum has only finitely many nonzero terms.
+
+\paragraph{Gaussian processes and the RC specialization.}
+
+For a zero-mean jointly Gaussian stationary process, the fourth-product identity is
+\[
+\E[X_1X_2X_3X_4]=C_{12}C_{34}+C_{13}C_{24}+C_{14}C_{23}.
+\]
+It follows by differentiating the Gaussian moment-generating function
+$\exp(\tfrac12\bm z^T\bm C\bm z)$ once in each of $z_1,z_2,z_3,z_4$ at zero: only the three ways to pair four indices survive. Apply it at times $t,t+\tau,t+u,t+u+\tau$:
+\begin{align*}
+\E[Q_\tau(t)Q_\tau(t+u)]
+&=C_X(\tau)^2+C_X(u)^2+C_X(u+\tau)C_X(u-\tau),\\
+K_\tau(u)&=C_X(u)^2+C_X(u+\tau)C_X(u-\tau).
+\end{align*}
+Cauchy--Schwarz and translation invariance of the integral imply
+\begin{align*}
+\int_{\mathbb R}|K_\tau(u)|\dd u
+&\leq\int_{\mathbb R}C_X(u)^2\dd u
++\sqrt{\int C_X(u+\tau)^2\dd u\int C_X(u-\tau)^2\dd u}\\
+&=2\int_{\mathbb R}C_X(u)^2\dd u.
+\end{align*}
+For the Gaussian exponential-covariance model, this bound equals $2\sigma^4/a$, since $\int_{\mathbb R}e^{-2a|u|}\dd u=1/a$. Therefore
+\[
+\E[|\widehat R_T(\tau)-R_X(\tau)|^2]\leq\frac{2\sigma^4}{aT}\longrightarrow0.
+\]
+The stationary Gaussian process with exponential covariance is therefore mean and correlation ergodic in mean square. This is the equilibrium RC model of Chapter~3. Flicker noise, random offsets, and switching transients require separate analysis.
+
+
+\subsection{Almost-sure ergodicity of sampled RC noise}
+\label{app:almost-sure}
+
+For stationary Gaussian noise with exponential covariance, fixed-rate sampling also permits an almost-sure convergence result. Sample at interval $\Delta t$ and set $\rho=e^{-a\Delta t}\in(0,1)$. Define
+\[
+\varepsilon_n=X_{n+1}-\rho X_n.
+\]
+For every $k\geq0$,
+\[
+\Cov(\varepsilon_n,X_{n-k})
+=\sigma^2\rho^{k+1}-\rho\sigma^2\rho^k=0,
+\qquad \Var(\varepsilon_n)=\sigma^2(1-\rho^2).
+\]
+Joint Gaussianity makes each innovation independent of the past, giving the stationary Markov recursion
+$X_{n+1}=\rho X_n+\varepsilon_n$ with independent Gaussian innovations.
+Iteration gives
+\[
+X_{n+m}=\rho^mX_n+\sum_{j=0}^{m-1}\rho^j\varepsilon_{n+m-1-j}.
+\]
+The second term is independent of $X_n$ and has variance
+$\sigma^2(1-\rho^2)\sum_{j=0}^{m-1}\rho^{2j}=\sigma^2(1-\rho^{2m})$. Hence
+\[
+X_{n+m}\mid X_n=x\ \sim\mathcal N(\rho^m x,\sigma^2(1-\rho^{2m})).
+\]
+As $m\to\infty$, this transition density converges pointwise to the stationary Gaussian density $\pi=\mathcal N(0,\sigma^2)$. All densities integrate to one, so Scheff\'{e}'s lemma gives convergence in $L^1$. For bounded functions $f,g$, it follows that
+\begin{align*}
+\E[f(X_n)g(X_{n+m})]
+&=\int f(x)\left[\int g(y)p_m(y\mid x)\dd y\right]\pi(x)\dd x\\
+&\longrightarrow\left[\int f(x)\pi(x)\dd x\right]
+\left[\int g(y)\pi(y)\dd y\right].
+\end{align*}
+The first convergence uses $L^1$ convergence of transition densities; the outer exchange uses the bound $\|f\|_\infty\|g\|_\infty$ under the probability density $\pi$. The Markov property extends this factorization to bounded observables of finite blocks separated by $m$ samples. Such cylinder events generate the path sigma-algebra, so approximation extends it to mixing of the stationary shift process.
+
+Mixing implies ergodicity: if an event $A$ is shift invariant, the probability of its intersection with its shifted copy remains $P(A)$, whereas mixing forces the limit to be $P(A)^2$. Thus $P(A)=P(A)^2$, so $P(A)$ is zero or one. Birkhoff's ergodic theorem now applies to the integrable observables $X_0$ and $X_0X_k$ and gives, for each fixed integer lag $k$,
+\[
+\frac1N\sum_{n=0}^{N-1}X_n\to0,\qquad
+\frac1N\sum_{n=0}^{N-1}X_nX_{n+k}\to\sigma^2\rho^{|k|}
+\quad\text{almost surely}.
+\]
+The almost-sure result depends on Gaussianity, exponential covariance, and stationary initialization. Consistency of a spectral estimator requires additional control of its bias and variance, as developed in Chapter~2.
+
+\subsection{Filtering and finite observation windows}
+\label{app:window-filter}
+Let $X$ be zero-mean WSS with $\int|R_X(\tau)|\dd\tau<\infty$, and let $\int|h(s)|\dd s<\infty$. Its two-sided PSD is bounded; write $M=\sup_f S_X^{(2)}(f)<\infty$. For a deterministic square-integrable weighting $g$ of finite support, expanding the expected square and using the spectral representation gives
+\[
+\E\left|\int g(t)X(t)\dd t\right|^2
+\leq M\int|g(t)|^2\dd t.
+\]
+Let $w_T$ equal one on $[0,T]$ and zero elsewhere. Substitution of $t=r+s$ into the windowed output transform gives the exact error
+\begin{align*}
+E_T(f)&=Y_T(f)-H(f)X_T(f)\\
+&=\int h(s)e^{-j2\pi fs}
+\left[\int [w_T(r+s)-w_T(r)]X(r)e^{-j2\pi fr}\dd r\right]\dd s.
+\end{align*}
+The two windows differ on intervals of total length $2\min(|s|,T)$. Applying the weighted-record bound inside the integral and the triangle inequality for RMS norms gives
+\[
+\sqrt{\frac{\E|E_T(f)|^2}{T}}
+\leq\sqrt{2M}\int|h(s)|\sqrt{\frac{\min(|s|,T)}{T}}\dd s
+\longrightarrow0.
+\]
+For each fixed $s$ the square-root factor tends to zero and is at most one, so integrability of $h$ permits dominated convergence. The same estimate applies to each path; the RMS triangle inequality controls their summed boundary error even when the inputs are correlated.
+
+For two paths set $Z_T=H_1X_{1,T}+H_2X_{2,T}$, so $Y_T=Z_T+E_T$. The quantity $\E|Z_T|^2/T$ is bounded by the corresponding input spectral bounds. Cauchy--Schwarz then yields
+\[
+\left|\frac{\E|Y_T|^2-\E|Z_T|^2}{T}\right|
+\leq2\sqrt{\frac{\E|Z_T|^2}{T}\frac{\E|E_T|^2}{T}}
++\frac{\E|E_T|^2}{T}\longrightarrow0.
+\]
+Thus the boundary error and its mixed terms do not affect the limiting PSD. This is an ensemble mean-square argument; no ergodicity assumption is needed.

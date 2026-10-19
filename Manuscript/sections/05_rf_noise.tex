@@ -1,0 +1,675 @@
+
+\clearpage
+\section{RF noise, matching, and cascades}
+\label{sec:rf}
+The output noise of a linear two-port can be described by equivalent input sources and their spectral covariance. This representation preserves the dependence on source impedance and the correlations between internal fluctuations.
+
+\subsection{Available power and power gain}
+For a Thevenin source with RMS open-circuit voltage $V_s$ and impedance $Z_s=R_s+jX_s$, $R_s>0$, conjugate matching gives the available signal power
+\[
+P_{\mathrm{avs}}=\frac{|V_s|^2}{4R_s}.
+\]
+A load $Z_L=R_L+jX_L$ receives the fraction
+\[
+\frac{P_L}{P_{\mathrm{avs}}}=\frac{4R_sR_L}{|Z_s+Z_L|^2},
+\]
+which equals one at $Z_L=Z_s^*$. A source at temperature $T_s$ has available noise-power density $kT_s$ in the classical limit. At each frequency, source signal and source thermal noise share the same mismatch factor; internally generated noise need not.
+
+Two power gains will be used:
+\begin{align*}
+G_T&=\frac{P_L}{P_{\mathrm{avs}}} &&\text{transducer power gain},\\
+G_A&=\frac{P_{\mathrm{av,out}}}{P_{\mathrm{avs}}} &&\text{available power gain}.
+\end{align*}
+$G_T$ uses the actual output load. $G_A$ uses the maximum output power obtainable by conjugate output matching for the specified source. Gain and noise factor must use consistent source and load references; a loaded voltage gain cannot replace a power gain.
+
+\subsection{Noise factor and input-referred noise power}
+\label{sec:noise-factor}
+Use a source at reference temperature $T_0=290$ K and a band over which gain and mismatch are approximately constant. Let $P_s$ and $N_s=kT_0B$ be its maximum available signal and noise powers under conjugate matching. Mismatch effects are already included in the transducer gain $G_T$. Let $N_a$ be network-added noise delivered to the specified noiseless output load, uncorrelated with source noise.
+
+The input SNR is $P_s/(kT_0B)$. Any input mismatch multiplies source signal and source noise by the same power factor, which cancels in their ratio. Network-added noise is included at the output, where it need not share that factor.
+
+Source signal and source noise share the transducer gain, giving
+\[
+P_o=G_TP_s,\qquad N_o=G_TkT_0B+N_a,\qquad
+\mathrm{SNR}_{\mathrm{out}}=\frac{G_TP_s}{G_TkT_0B+N_a}.
+\]
+Noise factor is the ratio of input SNR to output SNR:
+\begin{align}
+F&=\frac{\mathrm{SNR}_{\mathrm{in}}}{\mathrm{SNR}_{\mathrm{out}}}
+=\frac{P_s/(kT_0B)}{G_TP_s/(G_TkT_0B+N_a)}
+=1+\frac{N_a}{G_TkT_0B},\\
+NF&=10\log_{10}F\quad\text{in dB}.
+\end{align}
+For $NF=3.010$ dB, $F=2$: the network adds as much input-referred noise as the reference source. Signal gain need not be reduced. Dividing \emph{total} output noise by $G_T$ gives
+\begin{equation}
+\boxed{N_{\mathrm{in,eq}}=\frac{N_o}{G_T}
+=kT_0B+\frac{N_a}{G_T}=FkT_0B=FN_s.}
+\label{eq:input-referred-power}
+\end{equation}
+It includes source noise; the added input-referred noise alone is $(F-1)kT_0B$. This available-power reference differs from input-referred voltage or current density in Section~\ref{sec:input-referred}.
+
+Using the thermal density derived in Chapter~3 gives
+\begin{equation}
+\boxed{N_{\mathrm{in,eq}}\ (\mathrm{dBm})
+=-173.98+10\log_{10}(B/\mathrm{Hz})+NF.}
+\label{eq:opening}
+\end{equation}
+Use a single $B,F$ only when gain and noise factor are approximately constant over the weighted band; otherwise integrate the actual output spectra.
+
+\subsection{The input noise model of a two-port}
+\label{sec:twoport}
+Figure~\ref{fig:two-port} replaces the noisy network by the same noiseless signal network plus a series voltage $e_n$ and shunt current $i_n$. The equivalents describe \emph{network-added} noise and exclude the source's thermal noise. A voltage equivalent alone may reproduce one voltage-driven condition but generally fails as source impedance changes; a current equivalent alone has the analogous limitation. Both sources and their correlation are required to preserve arbitrary-source output effects.
+
+\TwoPortFigure
+
+
+For real zero-mean source processes, define finite-window transforms $E_T,I_T$ as in Chapter~2. At $f>0$, their one-sided cross spectrum is, in the ordinary-density case,
+\[
+S_{ie}(f)=2\lim_{T\to\infty}\frac1T\E[I_T(f)E_T(f)^*],\qquad S_{ei}=S_{ie}^*.
+\]
+The corresponding auto-PSDs are $S_e$ and $S_i$. These four real quantities ($S_e$, $S_i$, $\operatorname{Re}S_{ie}$, $\operatorname{Im}S_{ie}$) have units V$^2$/Hz, A$^2$/Hz, and VA/Hz respectively. The complex cross spectrum preserves the phase needed when the source is reactive.
+
+\paragraph{Putting all input noise in Norton form.}
+Set the deterministic source voltage to zero and express source and added noise as currents at the same input node (Figure~\ref{fig:norton-noise}).
+
+Write $Y_s=1/Z_s=G_s+jB_s$. With the voltage polarity shown, the series source $e_n$ supplies Norton current $Y_se_n$. Adding the existing shunt current gives the network-added excitation
+\[
+i_a=i_n+Y_se_n.
+\]
+The source's own thermal noise, omitted from the first diagram, is represented separately by $i_s$. Its PSD is
+\[
+S_{i_s}=|Y_s|^2(4kT_0R_s)
+=4kT_0\frac{R_s}{R_s^2+X_s^2}=4kT_0G_s.
+\]
+Only $G_s$ contributes dissipative thermal noise; the susceptance $B_s$ stores and returns energy.
+
+\NortonNoiseFigure
+
+Now expand the magnitude square of $i_a$ to obtain its PSD:
+\begin{align}
+S_a&=S_i+|Y_s|^2S_e+Y_s^*S_{ie}+Y_sS_{ei}\notag\\
+&=S_i+|Y_s|^2S_e+2\operatorname{Re}\{Y_s^*S_{ie}\}.
+\label{eq:added-norton}
+\end{align}
+Let $H_N$ be the common transfer from an injected input current to the measured output. Source and added PSDs at the output are $|H_N|^2(4kT_0G_s)$ and $|H_N|^2S_a$. Their ratio is unchanged by this common nonzero transfer, giving the source-dependent noise factor
+\begin{equation}
+\boxed{F(Y_s)=1+\frac{S_a}{4kT_0G_s},\qquad G_s>0.}
+\label{eq:Ftwo}
+\end{equation}
+Changing $Y_s$ changes both the voltage-noise conversion and its cross term. Thus $F$ depends on the network \emph{and its source termination}; the common transfer to the specified noiseless output load cancels.
+
+\Needspace{5\baselineskip}
+We can minimize this expression directly. Write $S_{ie}=a+jb$ and $Y_s=G_s+jB_s$. Since $\operatorname{Re}\{Y_s^*S_{ie}\}=aG_s+bB_s$, expanding and dividing by $G_s$ gives
+\[
+F=1+\frac{1}{4kT_0}
+\left[S_eG_s+2a+\frac{S_i+S_eB_s^2+2bB_s}{G_s}\right].
+\]
+For $S_e>0$, first minimize with respect to $B_s$ while holding $G_s$ fixed:
+\[
+\frac{\partial F}{\partial B_s}
+=\frac{S_eB_s+b}{2kT_0G_s}=0
+\quad\Longrightarrow\quad B_{\mathrm{opt}}=-\frac{b}{S_e}.
+\]
+Substituting this value leaves $S_i-b^2/S_e$ in the numerator of the last term. For $S_iS_e>b^2$, differentiating with respect to $G_s>0$ then gives
+\[
+\frac{\dd F}{\dd G_s}
+=\frac{1}{4kT_0}\left[S_e-\frac{S_i-b^2/S_e}{G_s^2}\right]=0
+\quad\Longrightarrow\quad
+G_{\mathrm{opt}}=\sqrt{\frac{S_i}{S_e}-\frac{b^2}{S_e^2}}.
+\]
+The remaining conductance terms have the form $AG_s+B/G_s$ with $A,B>0$, so this stationary point is the global minimum. Substitution gives
+\[
+F_{\min}=1+\frac{a+\sqrt{S_iS_e-b^2}}{2kT_0}.
+\]
+Direct differentiation finds the optimum, but the algebra does not clearly reveal its physical meaning: which noise contributions does the source impedance reduce, and which remain? Separating the current into a voltage-correlated component and an uncorrelated remainder makes that mechanism explicit. Section~\ref{sec:noise-optimum} then recovers the same minimum in these physically informative variables.
+
+\subsection{Separating correlated and uncorrelated noise}
+Work at one positive frequency with $S_e>0$. We seek a coefficient $Y_c$ that accounts for the part of current noise following the voltage noise:
+\[
+i_n=Y_ce_n+i_u,\qquad S_{i_ue}=0.
+\]
+The coefficient $Y_c$ has units A/V, or siemens, and scales amplitude and phase at this frequency. The residual is $i_u=i_n-Y_ce_n$. Linearity of the cross spectrum gives
+\[
+S_{i_ue}=S_{ie}-Y_cS_e=0
+\quad\Longrightarrow\quad \boxed{Y_c=S_{ie}/S_e.}
+\]
+Expanding the residual's magnitude square gives
+\begin{align*}
+S_u&=S_i+|Y_c|^2S_e-2\operatorname{Re}\{Y_c^*S_{ie}\}\\
+&=S_i-\frac{|S_{ie}|^2}{S_e},
+\end{align*}
+where the second line uses $S_{ie}=Y_cS_e$. Thus
+\[
+S_i=\underbrace{|Y_c|^2S_e}_{\text{correlated part}}+
+\underbrace{S_u}_{\text{uncorrelated remainder}}.
+\]
+
+\ProjectionFigure
+
+This is a new description of the same noise sources, not an additional physical noise generator. $Y_c$ need not be a realizable circuit admittance. Uncorrelated means zero cross spectrum; it does not by itself mean statistically independent.
+
+\paragraph{Why this choice is useful.}
+Suppose a different coefficient $\lambda$ were used to estimate the current from the voltage. Since $i_n=Y_ce_n+i_u$,
+\[
+i_n-\lambda e_n=i_u+(Y_c-\lambda)e_n.
+\]
+The two terms on the right are uncorrelated, so their PSDs add:
+\[
+S_{i-\lambda e}=S_u+|Y_c-\lambda|^2S_e\geq S_u.
+\]
+The smallest residual is therefore obtained at $\lambda=Y_c$. A residual PSD cannot be negative, so
+\[
+S_u\geq0\quad\Longrightarrow\quad |S_{ie}|^2\leq S_iS_e.
+\]
+A valid cross spectrum cannot exceed this bound. If equality holds, there is no uncorrelated remainder at that frequency.
+
+
+
+\paragraph{Connecting the separation to source matching.}
+Substitute $i_n=Y_ce_n+i_u$ into the Norton excitation:
+\[
+i_a=i_n+Y_se_n=i_u+(Y_s+Y_c)e_n.
+\]
+Now the two terms are uncorrelated. Their total density is therefore
+\[
+S_a=S_u+|Y_s+Y_c|^2S_e.
+\]
+The residual contribution $S_u$ is unchanged by $Y_s$. The other contribution depends on how the source conversion $Y_se_n$ combines with the correlated current $Y_ce_n$. Source matching can reduce this sum even though the device noise statistics themselves remain fixed.
+
+Write $Y_s=G_s+jB_s$ and $Y_c=G_c+jB_c$. To express the result in convenient circuit units, define
+\[
+R_n=\frac{S_e}{4kT_0},\qquad G_u=\frac{S_u}{4kT_0}.
+\]
+$R_n$ is measured in ohms and $G_u$ in siemens. These are noise parameters normalized to $T_0$, not additional passive resistors. Substitution into Eq.~\eqref{eq:Ftwo} gives
+\begin{align}
+F&=1+\frac{G_u+R_n|Y_s+Y_c|^2}{G_s}\notag\\
+&=1+\frac{G_u+R_n[(G_s+G_c)^2+(B_s+B_c)^2]}{G_s}.
+\label{eq:Fadmittance}
+\end{align}
+At fixed $G_s$, choosing $B_s=-B_c$ removes the imaginary part of $Y_s+Y_c$. It does not remove $S_u$ or the remaining real part. The next section also optimizes $G_s$.
+
+\begin{example}[title={Separating noise and choosing source reactance}]
+At one frequency, take $S_e=4\,(\mathrm{nV})^2/\mathrm{Hz}$, $S_i=9\,(\mathrm{pA})^2/\mathrm{Hz}$, and $S_{ie}=j4\,\mathrm{nV\,pA/Hz}$. The separation gives
+\[
+Y_c=\frac{S_{ie}}{S_e}=j1\,\mathrm{mS},\qquad
+S_u=S_i-\frac{|S_{ie}|^2}{S_e}=5\,(\mathrm{pA})^2/\mathrm{Hz}.
+\]
+Here $1\,\mathrm{pA/nV}=1\,\mathrm{mS}$. The correlated contribution is $|Y_c|^2S_e=4\,(\mathrm{pA})^2/\mathrm{Hz}$. These PSD contributions add, rather than their RMS amplitudes.
+
+Keep $G_s=1$ mS and use $S_a=S_u+|Y_s+Y_c|^2S_e$:
+\begin{center}
+\begin{tabular}{lcc}\toprule
+$Y_s$ (mS) & $|Y_s+Y_c|^2$ (mS$^2$) & $S_a$ ($(\mathrm{pA})^2$/Hz)\\\midrule
+$1$ & $2$ & $5+2\times4=13$\\
+$1-j1$ & $1$ & $5+1\times4=9$\\\bottomrule
+\end{tabular}
+\end{center}
+Both sources have the same thermal density $4kT_0G_s$, so reducing $S_a$ lowers F. The source susceptance cancels the imaginary part of $Y_c$; it does not remove the uncorrelated remainder.
+\end{example}
+
+\AdmittanceCancellationFigure
+
+\paragraph{Optional compact notation.}
+The original four spectra can also be stored in the spectral covariance matrix
+\[
+\bm S_n=\begin{pmatrix}S_e&S_{ei}\\S_{ie}&S_i\end{pmatrix}.
+\]
+The diagonal entries are PSDs; the off-diagonal entries are conjugate cross spectra. This matrix is simply a compact table, not an additional model requiring matrix calculations. If $S_e=0$, the cross-spectrum bound forces $S_{ie}=0$, leaving only current noise.
+
+\Needspace{5\baselineskip}
+\subsection{Optimum source admittance and noise parameters}
+\label{sec:noise-optimum}
+Source admittance changes how the voltage-noise component becomes input current. Its reactive part can compensate the correlated component, while its conductance trades voltage-noise conversion against current noise and source thermal noise. Minimizing the resulting ratio gives the noise parameters.
+Take the nondegenerate case $R_n>0$ and $G_u+R_nG_c^2>0$, with a passive source $G_s>0$. At fixed $G_s$,
+\[
+\frac{\partial F}{\partial B_s}=\frac{2R_n(B_s+B_c)}{G_s}=0.
+\]
+The squared susceptance term is minimized at $B_{\mathrm{opt}}=-B_c$. Substituting and expanding the conductance square gives
+\[
+F=1+2R_nG_c+R_nG_s+\frac{G_u+R_nG_c^2}{G_s}.
+\]
+Minimize with respect to $G_s$ by setting the first derivative to zero. The positive second derivative confirms upward curvature:
+\[
+\frac{\dd F}{\dd G_s}=R_n-\frac{G_u+R_nG_c^2}{G_s^2},\qquad
+\frac{\dd^2F}{\dd G_s^2}=\frac{2(G_u+R_nG_c^2)}{G_s^3}>0.
+\]
+As $G_s$ tends to zero or infinity, F diverges. The stationary point is therefore the global minimum:
+\begin{align}
+G_{\mathrm{opt}}&=\sqrt{G_c^2+G_u/R_n},\qquad B_{\mathrm{opt}}=-B_c,\\
+F_{\min}&=1+2R_n(G_c+G_{\mathrm{opt}}).
+\end{align}
+For a general source, use $G_u+R_nG_c^2=R_nG_{\mathrm{opt}}^2$ and subtract this minimum:
+\begin{align*}
+F-F_{\min}
+&=R_n\left(G_s+\frac{G_{\mathrm{opt}}^2}{G_s}-2G_{\mathrm{opt}}\right)
++\frac{R_n(B_s-B_{\mathrm{opt}})^2}{G_s}\\
+&=\frac{R_n}{G_s}[(G_s-G_{\mathrm{opt}})^2+(B_s-B_{\mathrm{opt}})^2].
+\end{align*}
+Consequently
+\begin{equation}
+\boxed{F(Y_s)=F_{\min}+\frac{R_n}{G_s}|Y_s-Y_{\mathrm{opt}}|^2.}
+\label{eq:Fopt}
+\end{equation}
+The four real noise parameters are $F_{\min}$, $R_n$, $G_{\mathrm{opt}}$, and $B_{\mathrm{opt}}$. Their roles are respectively best achievable noise factor, sensitivity to source mismatch, and the real and imaginary parts of the optimum source admittance. They are functions of frequency and operating condition. Degenerate cases such as $S_e=0$ or an optimum on a boundary must use the original covariance expression rather than a division by $R_n$.
+
+\begin{example}[title={Source dependence of noise figure}]
+At a specified frequency, take illustrative parameters $NF_{\min}=2.16$ dB, $R_n=35\,\Omega$, and $Y_{\mathrm{opt}}=(8.5-j15.8)$ mS. For $Z_s=50\,\Omega$, $G_s=20$ mS and $B_s=0$:
+\begin{align*}
+\Delta F&=\frac{35}{0.020}[(0.020-0.0085)^2+(0.0158)^2]\simeq0.6683,\\
+F&=10^{2.16/10}+\Delta F\simeq2.3127,\qquad NF\simeq3.64\ \mathrm{dB}.
+\end{align*}
+Inverting $Y_{\mathrm{opt}}$ gives $Z_{\mathrm{opt}}\simeq26.4+j49.1\,\Omega$. Its positive reactance is inductive. This termination minimizes the noise covariance ratio, rather than necessarily maximizing signal power. Even if $NF_{\min}$ is fixed, using another source raises the observed NF through the mismatch penalty.
+\end{example}
+
+\subsection{Noise circles and power matching}
+Let $Y_0=1/Z_0$ with real $Z_0$, and let $r_n=R_n/Z_0$. The admittance/reflection mapping is
+\[
+\Gamma_s=\frac{Y_0-Y_s}{Y_0+Y_s},\qquad
+Y_s=Y_0\frac{1-\Gamma_s}{1+\Gamma_s}.
+\]
+Multiplying the admittance fraction by the conjugate of its denominator gives
+\[
+G_s=Y_0\frac{\operatorname{Re}[(1-\Gamma_s)(1+\Gamma_s^*)]}{|1+\Gamma_s|^2}
+=Y_0\frac{1-|\Gamma_s|^2}{|1+\Gamma_s|^2}.
+\]
+Subtract the corresponding admittance for $\Gamma_{\mathrm{opt}}$. Putting the fractions over a common denominator cancels their constant and product terms, leaving
+\[
+Y_s-Y_{\mathrm{opt}}
+=\frac{2Y_0(\Gamma_{\mathrm{opt}}-\Gamma_s)}{(1+\Gamma_s)(1+\Gamma_{\mathrm{opt}})}.
+\]
+
+Taking its squared magnitude and substituting into Eq.~\eqref{eq:Fopt} cancels $|1+\Gamma_s|^2$, yielding
+\begin{equation}
+\boxed{F=F_{\min}+\frac{4r_n|\Gamma_s-\Gamma_{\mathrm{opt}}|^2}
+{(1-|\Gamma_s|^2)|1+\Gamma_{\mathrm{opt}}|^2}.}
+\end{equation}
+For a chosen $F\geq F_{\min}$ define the nonnegative number
+$N=(F-F_{\min})|1+\Gamma_{\mathrm{opt}}|^2/(4r_n)$. The contour equation becomes
+\begin{align*}
+|\Gamma_s-\Gamma_{\mathrm{opt}}|^2&=N(1-|\Gamma_s|^2),\\
+(1+N)|\Gamma_s|^2-2\operatorname{Re}(\Gamma_s\Gamma_{\mathrm{opt}}^*)
++|\Gamma_{\mathrm{opt}}|^2-N&=0,\\
+\left|\Gamma_s-\frac{\Gamma_{\mathrm{opt}}}{1+N}\right|^2
+&=\frac{N(1+N-|\Gamma_{\mathrm{opt}}|^2)}{(1+N)^2}.
+\end{align*}
+Thus each constant-noise contour is a circle with
+\[
+C_F=\frac{\Gamma_{\mathrm{opt}}}{1+N},\qquad
+r_F=\frac{\sqrt{N(1+N-|\Gamma_{\mathrm{opt}}|^2)}}{1+N}.
+\]
+In the admittance plane, let $\Delta F=F-F_{\min}$. Rearranging
+$(G_s-G_{\mathrm{opt}})^2+(B_s-B_{\mathrm{opt}})^2=\Delta F G_s/R_n$ and completing the conductance square gives
+\[
+\left(G_s-G_{\mathrm{opt}}-\frac{\Delta F}{2R_n}\right)^2
++(B_s-B_{\mathrm{opt}})^2
+=\left(G_{\mathrm{opt}}+\frac{\Delta F}{2R_n}\right)^2-G_{\mathrm{opt}}^2.
+\]
+Both circle families move their centers as $F$ changes.
+
+For a unilateral two-port ($S_{12}=0$), the source-matching factor is
+\[
+G_S(\Gamma_s)=\frac{1-|\Gamma_s|^2}{|1-S_{11}\Gamma_s|^2},\qquad
+G_{S,\max}=\frac1{1-|S_{11}|^2}.
+\]
+The maximum occurs at $\Gamma_s=S_{11}^*$ when $|S_{11}|<1$. For a bilateral two-port, the input conjugate match also depends on the output termination.
+
+Figure~\ref{fig:noise-circles} compares the noise and power optima.
+\NoiseCirclesFigure
+
+For illustrative $\Gamma_{\mathrm{opt}}=0.60e^{j83^\circ}$, $S_{11}=0.78e^{-j108^\circ}$, $r_n=0.69$, and $NF_{\min}=2.16$ dB, the formula gives about $3.64$ dB at a matched $50\,\Omega$ source and $3.44$ dB at $\Gamma_s=S_{11}^*$. The source gain at the noise optimum relative to its maximum is
+\[
+\frac{G_S(\Gamma_{\mathrm{opt}})}{G_{S,\max}}
+=\frac{(1-|\Gamma_{\mathrm{opt}}|^2)(1-|S_{11}|^2)}{|1-S_{11}\Gamma_{\mathrm{opt}}|^2},
+\]
+about $-1.73$ dB as a power-gain ratio. These different optima are a consequence of maximizing signal transfer versus minimizing a covariance-dependent noise ratio. A lossless matching network can relocate the source impedance seen by the two-port but cannot lower its $F_{\min}$; lossy matching adds its own fluctuations.
+
+\subsection{Noise factor of a passive network}
+\label{sec:passive-noise}
+A passive network generates thermal noise through dissipation. Use its available gain $G_A=P_{\mathrm{av,out}}/P_{\mathrm{avs}}$, with $0<G_A\leq1$, for the specified source. Output conjugate matching defines the available output power; input conjugate matching is not required. Assume uniform temperature $T_p$ and nearly constant gain over $B$.
+
+To find the network's added available output noise $N_{a,\mathrm{av}}$, first put the source, network, and an output load all at $T_p$. Choose the load conjugate to the output impedance. The load then sends $kT_pB$ into the source--network combination and must receive the same power at equilibrium; otherwise bodies at the same temperature would exchange net heat. The noise reaching it consists of transmitted source noise $G_AkT_pB$ and the network's own noise. Hence
+\[
+G_AkT_pB+N_{a,\mathrm{av}}=kT_pB
+\quad\Longrightarrow\quad
+N_{a,\mathrm{av}}=(1-G_A)kT_pB.
+\]
+The load's own noise establishes this balance and is excluded from $N_{a,\mathrm{av}}$. Returning the source to $T_0$, the available output signal is $G_AP_s$ and its total noise is $G_AkT_0B+N_{a,\mathrm{av}}$. Thus
+\[
+F=\frac{P_s/(kT_0B)}
+{G_AP_s/(G_AkT_0B+N_{a,\mathrm{av}})}
+=\boxed{1+\left(\frac1{G_A}-1\right)\frac{T_p}{T_0}.}
+\]
+At $T_p=T_0$, this becomes $F=1/G_A$.
+
+For the specified source impedance, output conjugate matching alone gives $P_L=P_{\mathrm{av,out}}$ and hence $G_T=G_A$; input conjugate matching is not required. Writing $L=1/G_T$, we recover
+\[
+F=1+(L-1)\frac{T_p}{T_0},
+\qquad
+\boxed{T_p=T_0:\quad F=L=\frac1{G_T}.}
+\]
+Thus a matched input network with $1.5$ dB loss at $T_0$ has $G_T=0.70795$ and $F=1.41254$, as used below. Its noise figure in dB equals its loss in dB.
+
+\Needspace{5\baselineskip}
+For S parameters referenced to a common real $Z_0$, the required available gain can be calculated from
+\[
+G_A=\frac{(1-|\Gamma_s|^2)|S_{21}|^2}
+{|1-S_{11}\Gamma_s|^2(1-|\Gamma_{\mathrm{out}}|^2)},
+\]
+\[
+\Gamma_{\mathrm{out}}=S_{22}+\frac{S_{12}S_{21}\Gamma_s}{1-S_{11}\Gamma_s}.
+\]
+Here $\Gamma_{\mathrm{out}}$ is the output reflection coefficient with the source connected, and $|\Gamma_s|,|\Gamma_{\mathrm{out}}|<1$.
+
+\subsection{Cascaded noise factor: Friis' formula}
+Assume matched interfaces, independent stage-added noise, a common band $B$, and linear transducer power gains $G_{T,j}$ with consistent reference conditions. Under these matching assumptions, transducer and available gains coincide. Represent stage $j$ by noiseless gain plus equivalent added noise \emph{at its own input}:
+\[
+A_j=(F_j-1)kT_0B.
+\]
+Each $F_j$ is defined for a standard source at $T_0$, so noise factors cannot be multiplied as noise gains. Instead, add each $A_j$ and propagate it through the subsequent gains (Figure~\ref{fig:friis}).
+\FriisFigure
+
+Starting with $N_0=N_s=kT_0B$, each stage obeys
+\[
+N_j=G_{T,j}(N_{j-1}+A_j).
+\]
+For example, substitute $N_1=G_{T,1}(N_s+A_1)$ into the next stage:
+\[
+N_2=G_{T,1}G_{T,2}(N_s+A_1)+G_{T,2}A_2.
+\]
+Repeating once more adds $G_{T,3}A_3$ at the output. Each noise term is multiplied by its own stage gain and every subsequent gain.
+
+Divide the final output by total gain $G_{T,1}G_{T,2}G_{T,3}$:
+\[
+N_{\mathrm{in,eq}}=N_s+A_1+\frac{A_2}{G_{T,1}}+\frac{A_3}{G_{T,1}G_{T,2}}.
+\]
+Dividing by $N_s$ gives
+\begin{align}
+F_{\mathrm{tot}}
+&=1+(F_1-1)+\frac{F_2-1}{G_{T,1}}+\frac{F_3-1}{G_{T,1}G_{T,2}}\notag\\
+&=\boxed{F_1+\frac{F_2-1}{G_{T,1}}+\frac{F_3-1}{G_{T,1}G_{T,2}}+\cdots.}
+\end{align}
+The same recursion proves the extension to any number of stages. Every later contribution is suppressed by preceding gain, whereas first-stage added noise is not. If interfaces are mismatched, one must use source-dependent noise and a consistent available-gain/noise-wave treatment; arbitrary loaded voltage gains do not belong in this expression. Frequency conversion also requires consistent image/sideband definitions.
+
+\begin{example}[breakable=false,title={Noise figure of a receiver cascade}]
+Take a matched input network at $T_0$ with loss $1.5$ dB ($F=L$, Section~\ref{sec:passive-noise}), an LNA with gain $18$ dB and NF $5$ dB, a mixer with conversion gain $0$ dB and NF $12$ dB, and an IF amplifier with NF $15$ dB. Use a common input-noise convention and convert each dB quantity by $10^{(\cdot)/10}$.
+\begin{center}\begin{tabular}{lrrr}\toprule
+Stage & Linear gain & Linear $F$ & Contribution to $F_{\mathrm{tot}}$\\\midrule
+Input loss & $0.70795$ & $1.41254$ & $1.41254$\\
+LNA & $63.0957$ & $3.16228$ & $(3.16228-1)/0.70795=3.0543$\\
+Mixer & $1$ & $15.8489$ & $(15.8489-1)/44.6684=0.3324$\\
+IF amplifier & unspecified & $31.6228$ & $(31.6228-1)/44.6684=0.6856$\\\bottomrule
+\end{tabular}\end{center}
+The sum is $F_{\mathrm{tot}}\simeq5.4848$, giving $NF_{\mathrm{tot}}=7.392$ dB. The final stage gain is unnecessary for its own input-referred contribution, but is required for predicting output noise or additional stages. Reducing the LNA gain to $10$ dB changes both later denominators and raises total NF to $10.37$ dB. Early gain reduces later-noise penalties but can increase vulnerability to overload; this is a separate signal-handling constraint.
+\end{example}
+
+\subsection{Noise temperature and sensitivity}
+Equivalent noise temperature expresses added input-referred noise as the power of a thermal source. Define $T_e$ by
+\[
+\frac{N_a}{G_T}=kT_eB.
+\]
+Combining with $F-1=N_a/(G_TkT_0B)$ gives
+\[
+T_e=T_0(F-1),\qquad F=1+T_e/T_0.
+\]
+For source temperature $T_s$, the actual input-referred total noise is $k(T_s+T_e)B$. $T_e$ is a statistical equivalence, not necessarily the network's physical temperature. The cascade recursion gives
+$T_{e,\mathrm{tot}}=T_{e1}+T_{e2}/G_{T,1}+T_{e3}/(G_{T,1}G_{T,2})+\cdots$ by replacing each $A_j$ with $kT_{ej}B$.
+
+For the matched passive network in Section~\ref{sec:passive-noise},
+\[
+T_{e,\mathrm{loss}}=(L-1)T_p.
+\]
+At $T_p=T_0$, placing it before a receiver gives, by Friis,
+\[
+F_{\mathrm{tot}}=L+\frac{F_{\mathrm{receiver}}-1}{1/L}
+=L F_{\mathrm{receiver}}.
+\]
+Its loss in dB therefore adds directly to receiver NF. A cold loss emits less noise, but still magnifies the input-referred effect of following stages.
+
+For required output power SNR $\mathcal R$, output signal $G_TP_s$ and noise $G_Tk(T_s+T_e)B$ give
+\[
+\frac{G_TP_s}{G_Tk(T_s+T_e)B}\geq\mathcal R
+\quad\Longrightarrow\quad P_{\min}=k(T_s+T_e)B\mathcal R.
+\]
+At $T_s=T_0$, logarithms give the sensitivity estimate
+\[
+P_{\min}\ (\mathrm{dBm})=-173.98+10\log_{10}(B/\mathrm{Hz})+NF+10\log_{10}\mathcal R.
+\]
+For $B=1$ MHz, $NF=5$ dB and required SNR $10$ dB, the source floor is $-113.98$ dBm, total input-referred noise $-108.98$ dBm, and sensitivity $-98.98$ dBm. Gain cancels in this SNR ratio, but its effect on downstream noise already appears through Friis.
+
+\paragraph{Y-factor measurement.}
+A calibrated hot/cold noise measurement varies $T_s$. Fixed gain and source impedance give
+$N_h=G_TkB(T_h+T_e)$ and $N_c=G_TkB(T_c+T_e)$. The measured linear power ratio therefore satisfies
+\[
+Y=\frac{N_h}{N_c}=\frac{T_h+T_e}{T_c+T_e}
+\quad\Longrightarrow\quad
+T_e=\frac{T_h-YT_c}{Y-1}.
+\]
+For $T_c=T_0$ and linear $\mathrm{ENR}=(T_h-T_0)/T_0$, use $F=1+T_e/T_0$ to obtain
+\[
+F=1+\frac{1+\mathrm{ENR}-Y}{Y-1}
+=\frac{\mathrm{ENR}}{Y-1}.
+\]
+
+For ENR $15$ dB and $Y=11$, $F=31.6228/10=3.16228$, so NF is $5$ dB. Convert a dB measurement of $Y$ to a linear ratio first. Gain drift, source mismatch changes between hot and cold states, intervening loss, and measurement receiver noise violate the simple cancellation unless calibrated or corrected. An estimated $Y$ close to one makes the inferred temperature particularly uncertain.
+
+
+\Needspace{5\baselineskip}
+\subsection{Frequency conversion and sideband noise}
+A mixer, linearized about a periodic local oscillator, is linear periodically time varying rather than LTI. Multiple RF frequencies can contribute to the same IF frequency. Its spectrum has the form
+\[
+S_{\mathrm{IF}}(f)=\sum_m|H_m(f)|^2S_{\mathrm{RF}}(f+mf_{\mathrm{LO}})+S_{\mathrm{added}}(f),
+\]
+with cross terms retained if the contributing sidebands are correlated. This is the same second-product rule as Eq.~\eqref{eq:cross}, now with transfer paths that translate frequency as well as scale amplitude.
+
+For a desired signal at $f_{\mathrm{LO}}+f_{\mathrm{IF}}$, the image frequency is $f_{\mathrm{LO}}-f_{\mathrm{IF}}$ (take $f_{\mathrm{LO}}>f_{\mathrm{IF}}>0$). Both bands convert to the same IF band: an IF filter cannot separate their noise after mixing (Figure~\ref{fig:mixer-image-noise}).
+\MixerImageNoiseFigure
+
+For an internally noiseless real mixer with equal conversion power gain $G_c$ from upper and lower RF sidebands, thermal source noise in each contributes $G_ckT_0B$ at IF. A desired signal in only one sideband contributes $G_cP_s$. The output SNR is $G_cP_s/(2G_ckT_0B)=P_s/(2kT_0B)$; relative to input SNR $P_s/(kT_0B)$, its SSB noise factor is $2$ or $3.01$ dB. 
+
+If both sidebands contain equal useful signals, the signal powers also add, giving ideal DSB factor one. Ordinary AM illustrates useful signals in both sidebands: a modulation tone at $f_m$ produces sidebands at $f_c-f_m$ and $f_c+f_m$, both carrying the message and usable in demodulation. This $3$-dB distinction assumes equal gains and compatible references. Image rejection or unequal gains changes the comparison. Application of Friis' formula to a conversion stage requires a specified sideband-noise convention.
+
+\subsection{Phase noise}
+\label{sec:phase-noise}
+Phase noise moves a carrier's zero crossings even when its amplitude is constant. Write
+\[
+v(t)=A\cos[2\pi f_ct+\Theta+\phi(t)],
+\]
+where $A$ is peak voltage, $f_c$ is carrier frequency, and $\phi(t)$ is the fluctuating phase in radians. Positive phase advances the waveform; negative phase delays it.
+
+\paragraph{Initial phase and phase differences.}
+The initial phase $\Theta$ is uniform on $[0,2\pi)$, independent of the entire process $\phi$, and fixed within each record. It models no preferred carrier phase relative to the observation clock. A fixed-phase deterministic carrier has a time-varying ensemble mean and is not WSS; randomizing its initial phase gives zero mean and lag-only correlation.
+
+\paragraph{Ensemble averaging with two random sources.}
+One outcome in this model specifies both an initial phase $\theta$ and a complete phase-fluctuation record $\phi(\cdot)$. An ensemble average must account for both. Averaging over $\Theta$ while holding the fluctuation record fixed generally leaves a result that still depends on that record.
+
+For two scalar random variables $U,V$ with joint density $p_{UV}$, the expectation of a function $g(U,V)$ is
+\[
+\E[g(U,V)]=\int_{\mathbb R}\!\int_{\mathbb R}
+g(u,v)p_{UV}(u,v)\dd u\dd v.
+\]
+Every pair is weighted by its joint probability, not by separately chosen samples. For finite absolute expectation, write $p_{UV}(u,v)=p_{U\mid V}(u\mid v)p_V(v)$ and integrate in two stages:
+\[
+\E[g(U,V)]
+=\int_{\mathbb R}\left[\int_{\mathbb R}g(u,v)p_{U\mid V}(u\mid v)\dd u\right]p_V(v)\dd v
+=\E_V\!\left[\E[g(U,V)\mid V]\right].
+\]
+The inner average holds $V=v$ fixed; the outer average weights the possible values of $V$. This is the law of total expectation. It does not require independence. Independence permits replacing $p_{U\mid V}$ by $p_U$. Discrete variables use probability-weighted sums; if a joint density does not exist, the same conditional-expectation rule still applies with probability integration.
+
+Here the two random sources are $\Theta$ and the entire process $\phi$. At fixed times $t,t+\tau$, set $U=\phi(t)$ and $V=\phi(t+\tau)$. Independence of $\Theta$ from the process means that, even with $U,V$ held fixed, its density remains $1/(2\pi)$. Thus, for any integrable function $g$ of these three values,
+\[
+\boxed{\E[g(\Theta,U,V)]
+=\E_\phi\!\left[\frac1{2\pi}\int_0^{2\pi}g(\theta,U,V)\dd\theta\right].}
+\]
+The inner integral varies only the initial phase. The outer expectation averages over the joint distribution of $U,V$, or equivalently over possible fluctuation records. The two phase samples need not be independent: $\Theta$ being independent of $\phi$ does not make $\phi(t)$ independent of $\phi(t+\tau)$. Both operations are ensemble averages; neither is a time average.
+
+\paragraph{Applying the two-stage average to correlation.}
+Define $\alpha(t)=2\pi f_ct+\Theta$ and $\Delta\phi_\tau=V-U$. For a fixed pair $U=u,V=v$, the inner average of the voltage product is
+\[
+\frac{A^2}{2\pi}\int_0^{2\pi}
+\cos[2\pi f_c(t+\tau)+\theta+v]\,
+\cos(2\pi f_ct+\theta+u)\dd\theta.
+\]
+Use $\cos a\cos b=\tfrac12\cos(a-b)+\tfrac12\cos(a+b)$. The difference term contains no $\theta$; the sum term contains $2\theta$. With $\beta=4\pi f_ct+2\pi f_c\tau+u+v$, the integral becomes
+\[
+\frac{A^2}{2}\cos(2\pi f_c\tau+v-u)
++\frac{A^2}{4\pi}\underbrace{\int_0^{2\pi}\cos(\beta+2\theta)\dd\theta}_{0}.
+\]
+The second term vanishes over the uniform initial phase, but the first still depends on the fluctuation pair. Taking the remaining ensemble expectation gives the exact correlation:
+\[
+\boxed{R_v(t+\tau,t)=\frac{A^2}{2}
+\E_\phi\cos(2\pi f_c\tau+\Delta\phi_\tau).}
+\]
+A common phase offset cancels. If the distribution of $\Delta\phi_\tau$ depends only on lag, $R_v$ also depends only on lag; together with zero mean, this makes the carrier WSS. The absolute phase itself need not be WSS.
+
+\Needspace{5\baselineskip}
+\paragraph{Small-phase sidebands.}
+First consider a zero-mean WSS phase process with finite variance
+$\sigma_\phi^2=\E[\phi(t)^2]\ll1$ rad$^2$ and offsets much smaller than $f_c$. To first order in phase,
+\[
+v(t)\simeq
+\underbrace{A\cos(2\pi f_ct+\Theta)}_{\text{nominal carrier}}
++\underbrace{[-A\phi(t)\sin(2\pi f_ct+\Theta)]}_{n_\phi(t)}.
+\]
+The noise term is the phase fluctuation multiplied by a carrier shifted by $90^\circ$. This multiplication translates the low-frequency phase spectrum to frequencies near the RF carrier.
+
+Apply the same two-stage averaging to $n_\phi$. With the fluctuation record held fixed, the two $\phi$ values are constants inside the initial-phase average:
+\begin{align*}
+R_{n_\phi}(\tau)
+&=A^2\E_\phi\!\left[\phi(t+\tau)\phi(t)
+\E_\Theta[\sin\alpha(t+\tau)\sin\alpha(t)\mid\phi]\right].
+\end{align*}
+The inner expectation is
+\[
+\frac1{2\pi}\int_0^{2\pi}
+\sin[2\pi f_c(t+\tau)+\theta]\sin(2\pi f_ct+\theta)\dd\theta
+=\frac12\cos(2\pi f_c\tau).
+\]
+This follows from $\sin a\sin b=\tfrac12[\cos(a-b)-\cos(a+b)]$: the sum term again averages to zero. The result no longer depends on the fluctuation record, so it comes outside the outer expectation:
+\begin{align*}
+R_{n_\phi}(\tau)
+&=\frac{A^2}{2}\cos(2\pi f_c\tau)\E_\phi[\phi(t+\tau)\phi(t)]\\
+&=\frac{A^2}{2}C_\phi(\tau)\cos(2\pi f_c\tau).
+\end{align*}
+The last step uses zero phase mean. The outer expectation retains the temporal dependence of the phase fluctuations; it is not replaced by a product of their individual means.
+To Fourier-transform, replace the cosine by $(e^{j2\pi f_c\tau}+e^{-j2\pi f_c\tau})/2$. Multiplying by these exponentials changes the transform's frequency argument from $f$ to $f-f_c$ and $f+f_c$, giving
+\begin{equation}
+S_{n_\phi}^{(2)}(f)=\frac{A^2}{4}
+[S_\phi^{(2)}(f-f_c)+S_\phi^{(2)}(f+f_c)].
+\label{eq:phase-sidebands}
+\end{equation}
+No Gaussian assumption is needed for this small-phase result.
+
+The phase spectrum is copied to both $\pm f_c$. Around the positive carrier, its positive and negative offsets produce the upper and lower noise sidebands.
+
+\Needspace{5\baselineskip}
+\paragraph{Single-sideband phase noise.}
+Substitute $f=f_c+\Delta f$, $\Delta f>0$, into Eq.~\eqref{eq:phase-sidebands}:
+\[
+S_{n_\phi}^{(2)}(f_c+\Delta f)
+=\frac{A^2}{4}\left[
+S_\phi^{(2)}(\Delta f)+S_\phi^{(2)}(2f_c+\Delta f)\right]
+\simeq\frac{A^2}{4}S_\phi^{(2)}(\Delta f).
+\]
+We assumed phase fluctuations are concentrated at frequencies much smaller than $f_c$, so the term at $2f_c+\Delta f$ is negligible. Since $n_\phi$ is real, its one-sided RF PSD is
+\[
+S_{n_\phi}^{(1)}(f_c+\Delta f)
+=2S_{n_\phi}^{(2)}(f_c+\Delta f)
+\simeq\frac{A^2}{2}S_\phi^{(2)}(\Delta f).
+\]
+The nominal carrier has mean square $\E[v_c^2]=A^2/2$, obtained by averaging $\cos^2$ over uniform initial phase.
+
+Single-sideband (SSB) phase noise $\mathcal L$ is the noise-to-carrier power ratio per hertz on one side of the carrier. Divide the RF noise PSD by this carrier mean square; the common resistance cancels in the power ratio:
+\begin{equation}
+\boxed{\mathcal L(\Delta f)
+=\frac{S_{n_\phi}^{(1)}(f_c+\Delta f)}{\E[v_c(t)^2]}
+\simeq S_\phi^{(2)}(\Delta f)
+=\tfrac12S_\phi^{(1)}(\Delta f),\qquad \Delta f>0.}
+\end{equation}
+Thus the factor $1/2$ comes directly from $S_\phi^{(1)}=2S_\phi^{(2)}$: the one-sided phase PSD combines both frequency signs, whereas $\mathcal L$ counts one RF sideband. These relations use the small-phase approximation. $S_\phi^{(1)}$ has units rad$^2$/Hz, and $10\log_{10}\mathcal L$ is reported in dBc/Hz.
+\PhaseNoiseFigure
+
+\Needspace{5\baselineskip}
+\paragraph{From phase noise to timing jitter.}
+Integrating over specified positive offsets $f_L$ to $f_H$ gives
+\[
+\sigma_{\phi,\mathrm{band}}^2
+=\int_{f_L}^{f_H}S_\phi^{(1)}(f)\dd f
+=2\int_{f_L}^{f_H}\mathcal L(f)\dd f.
+\]
+The factor two includes the noise on both sides of the carrier. Integrate $\mathcal L$ in linear units, not dBc/Hz.
+
+Let $t_0$ be a zero-crossing time without phase noise. The nominal and perturbed times for the same crossing satisfy
+\begin{align*}
+2\pi f_ct_0+\Theta&=\frac{\pi}{2}+n\pi,\qquad n\in\mathbb Z,\\
+2\pi f_c(t_0+\delta t)+\Theta+\phi(t_0+\delta t)&=\frac{\pi}{2}+n\pi.
+\end{align*}
+Subtracting gives $2\pi f_c\delta t+\phi(t_0+\delta t)=0$. For small jitter and phase varying slowly over $\delta t$, use $\phi(t_0+\delta t)\simeq\phi(t_0)$:
+\[
+\boxed{\delta t\simeq-\frac{\phi(t_0)}{2\pi f_c}.}
+\]
+The sign is consistent: $\phi(t_0)>0$ gives $\delta t<0$, so a positive phase perturbation advances the zero crossing. Taking the ensemble mean square for the zero-mean phase fluctuations in the stated offset band gives
+\[
+\boxed{\sigma_{t,\mathrm{band}}\simeq
+\frac{\sigma_{\phi,\mathrm{band}}}{2\pi f_c}.}
+\]
+For flat $\mathcal L=-120$ dBc/Hz over a $1$-MHz offset interval, linear density is $10^{-12}/\mathrm{Hz}$, phase variance is $2\times10^{-6}$ rad$^2$, and RMS phase is $1.414$ mrad. At $f_c=1$ GHz this corresponds to $225$ fs RMS timing noise. The stated offset band is part of the result: changing it changes the integrated jitter.
+
+\Needspace{5\baselineskip}
+\paragraph{Accumulated phase: diffusion and carrier linewidth.}
+An oscillator's phase can wander even while its amplitude stays constant. Think of independent, zero-mean phase steps $\epsilon_k$, each with variance $\sigma_\epsilon^2$, arriving every $\Delta t$. Their variances add:
+\[
+\phi(N\Delta t)=\sum_{k=1}^N\epsilon_k,
+\qquad
+\Var[\phi(N\Delta t)]=N\sigma_\epsilon^2=2D(N\Delta t),
+\qquad
+D=\frac{\sigma_\epsilon^2}{2\Delta t}.
+\]
+Thus phase uncertainty grows with elapsed time. Model this diffusion using Gaussian increments with
+\[
+\E[\Delta\phi_\tau]=0,\qquad
+\Var(\Delta\phi_\tau)=2D|\tau|,\qquad D>0.
+\]
+With $\phi(0)=0$, this gives $\Var\phi(t)=2Dt$: $\phi$ is not WSS and does not have an ordinary stationary phase PSD with finite total variance. We must return to the exact carrier-correlation formula, rather than extend the small-phase approximation to arbitrarily long times:
+\begin{align*}
+R_v(\tau)
+&=\frac{A^2}{2}\E_\phi[\cos(2\pi f_c\tau+\Delta\phi_\tau)]\\
+&=\frac{A^2}{2}\left(
+\cos(2\pi f_c\tau)\E_\phi[\cos\Delta\phi_\tau]
+-\sin(2\pi f_c\tau)\E_\phi[\sin\Delta\phi_\tau]\right).
+\end{align*}
+Symmetry makes the sine average zero. The cosine average is $e^{-D|\tau|}$, as derived below. Although each phasor $e^{j\Delta\phi_\tau}$ has unit magnitude, its angle spreads across the ensemble. Their average loses phase memory with time constant $\tau_c=1/D$; the oscillator's amplitude does not decay.
+
+\begin{derivation}[breakable=false,title={Ensemble average of a Gaussian phase increment}]
+For a zero-mean Gaussian variable $U$ with variance $q>0$, let
+$F(b)=\E[e^{jbU}]$. Its density obeys $p'(u)=-up(u)/q$. Differentiation and integration by parts give
+\[
+\begin{aligned}
+F'(b)&=j\int up(u)e^{jbu}\dd u
+=-jq\int p'(u)e^{jbu}\dd u\\
+&=-qbF(b),\qquad F(0)=1.
+\end{aligned}
+\]
+The Gaussian density makes the boundary term vanish. Solving gives
+$F(b)=e^{-qb^2/2}$. Its real and imaginary parts are the cosine and sine ensemble averages. With $b=1$ and $q=2D|\tau|$,
+\[
+\E[\cos\Delta\phi_\tau]=e^{-D|\tau|},
+\qquad \E[\sin\Delta\phi_\tau]=0.
+\]
+\end{derivation}
+Consequently,
+\begin{equation}
+R_v(\tau)=\frac{A^2}{2}e^{-D|\tau|}\cos(2\pi f_c\tau).
+\end{equation}
+The exponential Fourier transform from Chapter~2, shifted to the two carrier frequencies, gives
+\begin{equation}
+S_v^{(2)}(f)=\frac{A^2}{4}\left[
+\frac{2D}{D^2+[2\pi(f-f_c)]^2}
++\frac{2D}{D^2+[2\pi(f+f_c)]^2}\right].
+\end{equation}
+Each Lorentzian component falls to half its peak when $[2\pi(f-f_c)]^2=D^2$ (or symmetrically near $-f_c$). Its half-width and full width at half-maximum are
+\[
+\boxed{\mathrm{HWHM}=\frac{D}{2\pi},\qquad
+\mathrm{FWHM}=\frac{D}{\pi}=\frac{1}{\pi\tau_c}
+\quad\text{(Hz)}.}
+\]
+Faster loss of phase memory therefore produces a broader carrier line. The total mean square remains $R_v(0)=A^2/2$: diffusion spreads spectral power without reducing amplitude. Although the absolute phase is nonstationary, the carrier is WSS because its phase-increment statistics depend only on lag.
