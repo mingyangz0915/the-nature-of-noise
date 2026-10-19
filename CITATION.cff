@@ -1,0 +1,17 @@
+cff-version: 1.2.0
+message: "If you use these notes in your research or teaching, please cite them using the information below."
+
+type: book
+
+title: "The Nature of Noise: From Random Motion to Spectral Density, Thermal Equilibrium, and Circuit Analysis"
+
+authors:
+  - family-names: "Zhang"
+    given-names: "Mingyang"
+
+version: "1.0"
+date-released: "2026-10-18"
+
+url: "https://github.com/mingyangz0915/the-nature-of-noise"
+
+license: "CC-BY-NC-ND-4.0"
