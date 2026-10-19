@@ -1,0 +1,60 @@
+\usepackage[margin=23mm,top=24mm,bottom=25mm,headheight=15pt]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern,microtype}
+\usepackage{amsmath,amssymb,mathtools,bm,booktabs,array}
+\usepackage{tikz,pgfplots}
+\usetikzlibrary{arrows.meta,positioning,calc,decorations.pathmorphing}
+\pgfplotsset{compat=1.18}
+\usepackage[most]{tcolorbox}
+\usepackage{fancyhdr,lastpage,hyperref,xcolor,enumitem}
+\usepackage{needspace}
+\definecolor{navy}{HTML}{202020}
+\definecolor{teal}{HTML}{484848}
+\definecolor{blue}{HTML}{383838}
+\definecolor{orange}{HTML}{585858}
+\definecolor{red}{HTML}{626262}
+\definecolor{paper}{HTML}{F8F8F8}
+\definecolor{lightteal}{HTML}{F8F8F8}
+\definecolor{lightblue}{HTML}{F7F7F7}
+\definecolor{lightorange}{HTML}{F8F8F8}
+\definecolor{lightred}{HTML}{F7F7F7}
+\hypersetup{colorlinks=true,linkcolor=blue,urlcolor=teal,
+  pdftitle={The Nature of Noise: From Random Motion to Spectral Density, Thermal Equilibrium, and Circuit Analysis},
+  pdfauthor={Mingyang Zhang},
+  pdfsubject={Version 1.0. First public release: October 18, 2026.}}
+\pagestyle{fancy}\fancyhf{}
+\fancyhead[L]{\sffamily\small THE NATURE OF NOISE}
+\fancyhead[R]{\sffamily\small ANALOG AND RF CIRCUITS}
+\fancyfoot[L]{\footnotesize From probability to physical circuits}
+\fancyfoot[R]{\footnotesize\thepage\,/\,\pageref{LastPage}}
+\renewcommand{\headrulewidth}{0.4pt}
+\setlength{\parindent}{0pt}\setlength{\parskip}{4pt}
+\setlist[itemize]{leftmargin=2em,itemsep=2pt,topsep=2pt}
+\setlist[enumerate]{leftmargin=2em,itemsep=4pt,topsep=3pt}
+\newtcolorbox{concept}[1][]{enhanced,breakable,colback=lightblue,colframe=blue,
+  boxrule=.65pt,arc=1.5mm,left=3mm,right=3mm,top=2mm,bottom=2mm,
+  fonttitle=\bfseries\sffamily,title={Definition},#1}
+\newtcolorbox{insight}[1][]{enhanced,breakable,colback=lightteal,colframe=teal,
+  boxrule=.65pt,arc=1.5mm,left=3mm,right=3mm,top=2mm,bottom=2mm,
+  fonttitle=\bfseries\sffamily,title={Physical interpretation},#1}
+\newtcolorbox{example}[1][]{enhanced,breakable,colback=lightorange,colframe=orange,
+  boxrule=.65pt,arc=1.5mm,left=3mm,right=3mm,top=2mm,bottom=2mm,
+  fonttitle=\bfseries\sffamily,title={Worked example},#1}
+\newtcolorbox{caution}[1][]{enhanced,breakable,colback=lightred,colframe=red,
+  boxrule=.65pt,arc=1.5mm,left=3mm,right=3mm,top=2mm,bottom=2mm,
+  fonttitle=\bfseries\sffamily,title={Convention and limitation},#1}
+\newtcolorbox{derivation}[1][]{enhanced,breakable,colback=paper,colframe=navy!70,
+  boxrule=.55pt,arc=1.5mm,left=3mm,right=3mm,top=2mm,bottom=2mm,
+  fonttitle=\bfseries\sffamily,title={Derivation},#1}
+\newcommand{\E}{\mathbb E}
+\newcommand{\dd}{\mathrm d}
+\newcommand{\Var}{\operatorname{Var}}
+\newcommand{\Cov}{\operatorname{Cov}}
+\newcommand{\rms}{\mathrm{rms}}
+\newcommand{\enbw}{\mathrm{ENBW}}
+
+% Keep related text on pages containing figures instead of creating sparse float pages.
+\renewcommand{\topfraction}{0.9}
+\renewcommand{\bottomfraction}{0.8}
+\renewcommand{\textfraction}{0.08}
+\renewcommand{\floatpagefraction}{0.8}

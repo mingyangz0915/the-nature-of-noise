@@ -1,0 +1,47 @@
+\documentclass[11pt,a4paper]{article}
+\input{preamble}
+\input{figures/figures}
+
+\begin{document}
+\hypersetup{pageanchor=false}
+\begin{titlepage}
+\thispagestyle{empty}
+\vspace*{32mm}
+{\sffamily\large ANALOG AND RF INTEGRATED CIRCUITS}\par
+\vspace{9mm}\rule{\linewidth}{1.2pt}\par
+\vspace{19mm}
+{\sffamily\bfseries\fontsize{34}{41}\selectfont The Nature of Noise}\par
+\vspace{8mm}
+{\sffamily\fontsize{18}{26}\selectfont From random motion to spectral density,\par
+ thermal equilibrium, and circuit analysis}\par
+\vspace{18mm}
+\begin{tikzpicture}[x=1cm,y=1cm]
+  \draw[black!35] (0,0)--(16,0);
+  \draw[black!20,dashed] (0,1)--(16,1) (0,-1)--(16,-1);
+  \draw[black,line width=1.05pt,samples=500,domain=0:16,smooth]
+    plot (\x,{.40*sin(83*\x)+.24*sin(179*\x)+.16*cos(373*\x)});
+  \foreach \x/\label in {1.7/Probability,5.9/Correlation,10.1/Spectrum,14.1/Circuits}
+    \node[draw=black!65,rounded corners=2pt,fill=white,
+      text=black,font=\sffamily\small,inner sep=7pt] at (\x,-2.1) {\label};
+\end{tikzpicture}
+\vfill
+{\sffamily\large Mingyang Zhang}\par
+\vspace{3mm}{\sffamily\small October 2026}\par
+\vspace{5mm}
+{\sffamily\small For readers of analog electronics, integrated circuits, and RF systems}\par
+\vspace{13mm}\rule{\linewidth}{.5pt}
+\end{titlepage}
+\input{sections/00_copyright}
+\hypersetup{pageanchor=true}
+
+\input{sections/00_roadmap}
+\clearpage
+\begingroup\small\setlength{\parskip}{0pt}\tableofcontents\endgroup
+\clearpage
+\input{sections/01_random_processes}
+\input{sections/02_correlation_spectrum}
+\input{sections/03_thermal_noise}
+\input{sections/04_circuits_systems}
+\input{sections/05_rf_noise}
+\input{sections/appendix_mathematics}
+\end{document}
