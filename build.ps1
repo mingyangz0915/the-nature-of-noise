@@ -1,3 +1,8 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 Mingyang Zhang
+#
+# This build script is licensed under the MIT License.
+# See Examples/LICENSE for the full license text.
 
 $ErrorActionPreference = 'Stop'
 
