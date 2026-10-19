@@ -76,12 +76,13 @@ A DOI and version-specific citation information may be added following archival 
 
 Copyright © 2026 Mingyang Zhang.
 
-The manuscript, its LaTeX source, and original figures are licensed under the [Creative Commons Attribution–NonCommercial–NoDerivatives 4.0 International License (CC BY-NC-ND 4.0)](https://creativecommons.org/licenses/by-nc-nd/4.0/).
+This repository uses separate licenses for the manuscript and software components:
 
-You may copy and redistribute the unmodified licensed material for noncommercial purposes, provided that appropriate attribution is given and the license terms are followed.
+- **Manuscript:** The PDF, LaTeX manuscript source, and original figures are licensed under the [Creative Commons Attribution–NonCommercial–NoDerivatives 4.0 International License (CC BY-NC-ND 4.0)](https://creativecommons.org/licenses/by-nc-nd/4.0/). See [`LICENSE`](LICENSE).
+- **Software:** The original software examples in `Examples/` and the `build.ps1` script are licensed under the [MIT License](https://opensource.org/licenses/MIT). See [`Examples/LICENSE`](Examples/LICENSE).
 
-Redistribution of adapted versions, including modified or translated editions, requires separate permission from the copyright holder, except where permitted by applicable law.
+The manuscript may be shared in unmodified form for noncommercial purposes with appropriate attribution. Public redistribution of adapted manuscript material requires separate permission from the copyright holder, except where permitted by applicable law.
 
-The software examples in `Examples/` and the `build.ps1` script are not included in the manuscript license grant. Separate software licensing terms may be provided for these files.
+The MIT-licensed software may be used, modified, and redistributed, including for commercial purposes, subject to the MIT License conditions.
 
-Third-party materials, if any, remain subject to their respective rights and licenses.
+Third-party materials, if any, remain subject to their respective licenses and rights.
